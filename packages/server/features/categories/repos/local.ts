@@ -26,7 +26,6 @@ export class CategoryLocalRepo {
   }
 
   public async getSubCategories(parentPath?: string): Promise<Category[]> {
-    console.log(this.parentPathCachedMap)
     return this.parentPathCachedMap.get(parentPath || "") || [];
   }
 

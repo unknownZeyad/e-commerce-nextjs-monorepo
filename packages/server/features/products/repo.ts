@@ -1,8 +1,8 @@
-import { DrizzleClient } from "../../core/lib/db";
+import { db, DrizzleClient } from "../../core/lib/db";
 import { eq, like, or, count, SQL } from "drizzle-orm";
 import { InsertProduct, Product, productsTable } from "./model";
 
-class ProductServices {
+class ProductRepo {
   private db: DrizzleClient;
   private count: number = 0;
 
@@ -18,34 +18,36 @@ class ProductServices {
     this.count = value;
   }
 
-  public async getProducts(
+  public async getAll(
     page: number,
     limit: number,
     query?: string,
-    filterKeys?: (keyof Product)[],
-    sortKey: keyof Product = "createdDate",
-    sortDir: "asc" | "desc" = "desc"
+    queryKeys?: (keyof Product)[],
   ) {
     let whereClause: SQL | undefined;
 
-    if (query && filterKeys?.length) {
-      const conditions = filterKeys.map((key) =>
+    if (query && queryKeys?.length) {
+      const conditions = queryKeys.map((key) =>
         like(productsTable[key as keyof Product], `%${query}%`)
       );
       whereClause = or(...conditions);
     }
 
-    const orderByColumn = productsTable[sortKey as keyof typeof productsTable];
-    const orderByClause =
-      sortDir === "asc" ? (orderByColumn as any).asc() : (orderByColumn as any).desc();
+    const products = this.db
+    .select()
+    .from(productsTable)
+    .where(whereClause)
+    .limit(limit)
+    .offset((page - 1) * limit)
 
-    return this.db
-      .select()
-      .from(productsTable)
-      .where(whereClause)
-      .orderBy(orderByClause)
-      .limit(limit)
-      .offset((page - 1) * limit);
+    const totalPages = Math.ceil(this.count / limit);
+
+
+    return {
+      products,
+      totalPages,
+      currentPage: page
+    }
   }
 
   public async create(payload: InsertProduct) {
@@ -88,4 +90,6 @@ class ProductServices {
   }
 }
 
-export default ProductServices;
+
+export const productRepo = new ProductRepo(db)
+

@@ -4,7 +4,7 @@ const config: Config = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",
     "./hooks/**/*.{ts,tsx}",
-    "../../packages/client/src/**/*.{js,ts,jsx,tsx}",
+    "../../packages/client/src/components/ui/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {},

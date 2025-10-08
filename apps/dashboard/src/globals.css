@@ -1,5 +1,8 @@
 @import "tailwindcss";
-@config "../tailwind.config.ts";
+/* @import "tw-animate-css"; */
+/* @config "../tailwind.config.ts"; */
+
+@import "../../../packages/client/styles.css";
 
 :root {
   --background: #ffffff;
