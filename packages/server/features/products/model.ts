@@ -12,10 +12,10 @@ import {
 export const productsTable = pgTable("products", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  description: text("description").notNull(),
+  description: text("descripti  on").notNull(),
   price: real("price").notNull(),
   discountPercentage: real("discount_percentage").default(0),
-  images: 
+  images: text("images").array(),
   quantity: integer("quantity").notNull().default(0),
   createdDate: timestamp("created_date", { mode: "string" })
     .defaultNow()

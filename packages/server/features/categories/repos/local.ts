@@ -54,10 +54,15 @@ export class CategoryLocalRepo {
     const fullPath = this.getFullPath(category);
 
     this.fullPathCachedMap.set(fullPath, category);
-    this.parentPathCachedMap.set(
-      category.parentPath,
-      [...(this.parentPathCachedMap.get(category.parentPath) || []), category]
-    ); 
+
+    const parentPathMap = (this.parentPathCachedMap.get(category.parentPath)||[])
+    for (let i = 0; i < parentPathMap?.length; i++) {
+      if (parentPathMap[i].id === category.id) {
+        parentPathMap[i] = category
+        this.parentPathCachedMap.set(category.parentPath,parentPathMap)
+        break;
+      }
+    }
   }
 
   public async delete(category: Category) {
