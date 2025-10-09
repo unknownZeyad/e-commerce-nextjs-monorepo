@@ -19,6 +19,7 @@ function CategoriesTree() {
       <div className="flex justify-between mb-2">
         <h1 className="text-xl mb-4">Categories</h1>
         <Button
+          variant='secondary'
           onClick={() => setIsCreating(true)}
         >Add Base Category</Button>
       </div>
@@ -127,7 +128,7 @@ function CreateCategoryField ({ parentPath, setIsCreating, parentId }: {
   setIsCreating: Dispatch<React.SetStateAction<boolean>>,
   parentId?: number
 }) {
-  const { isLoading, create } = useCreateCategory()
+  const { isPending, create } = useCreateCategory()
   const inputRef = useRef<HTMLInputElement>(null)
 
   function handleCreate () {
@@ -135,7 +136,7 @@ function CreateCategoryField ({ parentPath, setIsCreating, parentId }: {
     if (!value) 
       return inputRef.current?.focus()
 
-    if (!isLoading)
+    if (!isPending)
     create({ name: value, parentPath, parentId },{
       onSuccess: () => setIsCreating(false)
     })
@@ -143,7 +144,7 @@ function CreateCategoryField ({ parentPath, setIsCreating, parentId }: {
 
   return (
     <li className="mt-2 pl-6">
-      <span className="absolute left-0 bottom-5 w-8 h-px bg-black/30 dark:bg-white/30"/>
+      <span className="absolute left-0 bottom-5 w-8 h-p bg-black/30 dark:bg-white/30"/>
       <div className="flex items-center gap-2">
         <Input 
           className="w-[250px]" 
@@ -153,7 +154,7 @@ function CreateCategoryField ({ parentPath, setIsCreating, parentId }: {
         />
         <X 
           onClick={() => setIsCreating(false)}
-          className="hover:bg-red-500/20 ml-3 bg-red-500/10 duration-150 text-red-500 cursor-pointer p-1 w-[25px] h-[25px] rounded-lg" 
+          className="hover:bg-red-500/20 bg-red-500/10 duration-150 text-red-500 cursor-pointer p-1 w-[25px] h-[25px] rounded-lg" 
         />
         <Check
           onClick={handleCreate}

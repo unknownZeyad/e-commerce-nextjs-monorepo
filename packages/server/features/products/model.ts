@@ -15,6 +15,7 @@ export const productsTable = pgTable("products", {
   description: text("description").notNull(),
   price: real("price").notNull(),
   discountPercentage: real("discount_percentage").default(0),
+  images: 
   quantity: integer("quantity").notNull().default(0),
   createdDate: timestamp("created_date", { mode: "string" })
     .defaultNow()

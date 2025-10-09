@@ -1,9 +1,9 @@
 import { deleteCategoryAction } from "@/actions";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useDeleteCategory() {
   const queryClient = useQueryClient()
-  const { mutate: deleteCat, isLoading: isDeleting } = useMutation<
+  const { mutate: deleteCat, isPending: isDeleting } = useMutation<
     void, 
     unknown,
     {

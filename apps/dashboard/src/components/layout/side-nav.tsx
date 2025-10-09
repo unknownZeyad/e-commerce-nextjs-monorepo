@@ -1,5 +1,5 @@
 'use client'
-import { cn } from '@packages/client/';
+import { cn } from '@packages/client/src/lib/utils';
 import { ChartNoAxesCombined, PackageSearch, ShoppingBasket, SlidersHorizontal, Store, UserRound } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
