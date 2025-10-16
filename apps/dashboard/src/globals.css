@@ -12,6 +12,7 @@ body {
 ::-webkit-scrollbar {
   background-color: transparent;
   width: 10px;
+  height: 10px;
 }
 
 
@@ -27,5 +28,9 @@ body {
 }
 
 ::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-corner {
   display: none;
 }

@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { Category } from "@packages/server/features/categories/model";
-import { getSubCategoriesAction } from "@/actions";
+import { getCategoriesFullPathAction } from "../actions";
 
-export function useGetCategories(path?: string, enable?: boolean) {
+export function useGetCategoryFullPath(fullPath: string, enabled?: boolean) {
   const { data, isLoading, error } = useQuery<Category[]>({
-    queryKey: ['categories', path],
-    queryFn: () => getSubCategoriesAction(path),
+    queryKey: ['category_full_path', fullPath],
+    queryFn: () => getCategoriesFullPathAction(fullPath),
     staleTime: Infinity,
     gcTime: Infinity,
-    enabled: enable 
+    enabled
   })
 
   return { data, isLoading, error }

@@ -3,90 +3,84 @@ import { memo, ReactNode } from 'react';
 import { useURLParams } from '../../hooks/use-url-params';
 import { Button } from './button';
 
-type TPaginationInfos = {
-  current: number;
-  pages: number;
-  has_next: boolean;
-  has_previous: boolean;
-};
-
-function Pagination({ page, total }: { page: TPaginationInfos; total: number }) {
+function Pagination({ totalPages }: { totalPages: number }) {
   const searchParams = useURLParams();
-  if (!page) return null;
+  if (!totalPages) return null;
 
-  const { current, pages, has_next, has_previous } = page;
   const currentPage = Number(searchParams.get('page')) || 1;
+  const hasNext = totalPages > currentPage
+  const hasPrev = currentPage > 1
 
   function next() {
-    if (has_next) searchParams.set('page', `${currentPage + 1}`);
+    if (hasNext) searchParams.set('page', `${currentPage + 1}`);
   }
 
   function previous() {
-    if (has_previous) searchParams.set('page', `${currentPage - 1}`);
+    if (hasPrev) searchParams.set('page', `${currentPage - 1}`);
   }
 
   const showLeftSideBreaker = currentPage > 3;
-  const showRightSideBreaker = currentPage < pages - 2;
+  const showRightSideBreaker = currentPage < totalPages - 2;
 
   const leftBreakerTarget = Math.floor((1 + currentPage) / 2);
-  const rightBreakerTarget = Math.floor((currentPage + pages) / 2);
+  const rightBreakerTarget = Math.floor((currentPage + totalPages) / 2);
 
   return (
     <div className="flex w-full dark:text-zinc-300 items-center justify-between">
-      <div className="flex gap-2 w-fit items-center">
+      <div className="flex h-[30px] gap-2 w-fit items-center">
         <Button
           type="button"
           variant="secondary"
-          disabled={!has_previous}
+          disabled={!hasPrev}
           onClick={previous}
-          className="pr-3 pl-2"
+          className="pr-3 pl-2 h-full !py-0"
         >
-          <HiChevronLeft className="h-[1.8rem] w-[1.8rem]" />
+          <HiChevronLeft className="text-2xl" />
           <span>Previous</span>
         </Button>
 
           
-        <PageBtn page={page} targetPage={1}>{1}</PageBtn>
+        <PageBtn totalPages={totalPages} targetPage={1}>{1}</PageBtn>
 
         {showLeftSideBreaker && (
-          <PageBtn page={page} targetPage={leftBreakerTarget}>...</PageBtn>
+          <PageBtn totalPages={totalPages} targetPage={leftBreakerTarget}>...</PageBtn>
         )}
 
         {currentPage > 2 && (
-          <PageBtn page={page} targetPage={currentPage - 1}>
+          <PageBtn totalPages={totalPages} targetPage={currentPage - 1}>
             {currentPage - 1}
           </PageBtn>
         )}
 
-        {currentPage > 1 && currentPage < pages && (
-          <PageBtn page={page} targetPage={currentPage}>
+        {currentPage > 1 && currentPage < totalPages && (
+          <PageBtn totalPages={totalPages} targetPage={currentPage}>
             {currentPage}
           </PageBtn>
         )}
 
-        {currentPage < pages - 1 && (
-          <PageBtn page={page} targetPage={currentPage + 1}>
+        {currentPage < totalPages - 1 && (
+          <PageBtn totalPages={totalPages} targetPage={currentPage + 1}>
             {currentPage + 1}
           </PageBtn>
         )}
 
         {showRightSideBreaker && (
-          <PageBtn page={page} targetPage={rightBreakerTarget}>...</PageBtn>
+          <PageBtn totalPages={totalPages} targetPage={rightBreakerTarget}>...</PageBtn>
         )}
 
-        {pages > 1 && (
-          <PageBtn page={page} targetPage={pages}>{pages}</PageBtn>
+        {totalPages > 1 && (
+          <PageBtn totalPages={totalPages} targetPage={totalPages}>{totalPages}</PageBtn>
         )}
 
         <Button
           onClick={next}
           type="button"
           variant="secondary"
-          className="pl-3 pr-2"
-          disabled={!has_next}
+          className="pl-3 pr-2 h-full !py-0"
+          disabled={!hasNext}
         >
           <span>Next</span>
-          <HiChevronRight className="h-[1.8rem] w-[1.8rem]" />
+          <HiChevronRight className="text-2xl" />
         </Button>
       </div>
     </div>
@@ -95,8 +89,8 @@ function Pagination({ page, total }: { page: TPaginationInfos; total: number }) 
 
 export default (Pagination);
 
-function PageBtn({ page, targetPage, children }: {
-  page: TPaginationInfos,
+function PageBtn({ totalPages, targetPage, children }: {
+  totalPages: number,
   targetPage: number,
   children: ReactNode
 }) {
@@ -105,7 +99,7 @@ function PageBtn({ page, targetPage, children }: {
   
   function navigate() {
     const canNavigate =
-      targetPage > 0 && targetPage <= page.pages && currentPage !== targetPage;
+      targetPage > 0 && targetPage <= totalPages && currentPage !== targetPage;
     if (canNavigate) searchParams.set('page', `${targetPage}`);
   }
 
@@ -113,6 +107,7 @@ function PageBtn({ page, targetPage, children }: {
     <Button 
       type="button" 
       size='sm'
+      className='h-full'
       variant={currentPage === targetPage ? "default" : "secondary"}
       onClick={navigate}
     >

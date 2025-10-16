@@ -40,7 +40,7 @@ const navSections = [
     links: [
       {
         label: 'Profile',
-        href: '/dashboard',
+        href: '/dashboard/settings',
         icon: <UserRound />
       }
     ]
@@ -50,7 +50,7 @@ const navSections = [
 function SideNav() {
   const pathname = usePathname()
   return (
-    <aside className="w-[250px] py-5 h-full overflow-auto">
+    <aside className="w-[200px] py-5 h-full overflow-auto">
       <h1 className="text-2xl font-bold uppercase">Spark</h1>
 
       <nav className='mt-20 flex flex-col gap-10'>
@@ -64,7 +64,7 @@ function SideNav() {
                   key={index}
                   className={cn(
                     'flex items-center gap-3 p-3 duration-200 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer dark:text-white/70',
-                    href.startsWith(pathname) && 'dark:bg-white/10'
+                    pathname.startsWith(href) && 'dark:bg-white/10'
                   )}
                 >
                   {icon}

@@ -1,5 +1,5 @@
 {
-  "id": "f7b345d3-5f9a-4cdc-93be-13a6d6b22468",
+  "id": "919dfd64-beed-40b4-95f0-98e31b1187b9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -101,8 +101,15 @@
           "name": "discount_percentage",
           "type": "real",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "default": 0
+        },
+        "images": {
+          "name": "images",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'"
         },
         "quantity": {
           "name": "quantity",

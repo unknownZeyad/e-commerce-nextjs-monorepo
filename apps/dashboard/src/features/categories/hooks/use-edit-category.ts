@@ -1,4 +1,4 @@
-import { updateCategoryAction } from "@/actions";
+import { updateCategoryAction } from "../actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useEditCategory() {
@@ -12,6 +12,7 @@ export function useEditCategory() {
   >({
     mutationFn: ({ id, name }) => updateCategoryAction(id, { name }),
     onSuccess(data, { parentPath }) {
+      queryClient.invalidateQueries({ queryKey: ['category_full_path'] })
       queryClient.invalidateQueries({ queryKey: ['categories', parentPath] })
     },
   })

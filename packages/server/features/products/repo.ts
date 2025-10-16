@@ -2,6 +2,8 @@ import { db, DrizzleClient } from "../../core/lib/db";
 import { eq, like, or, count, SQL } from "drizzle-orm";
 import { InsertProduct, Product, productsTable } from "./model";
 
+export type ProductFilterKey = (keyof Omit<Product, 'price' | 'discountPercentage' | 'images' | 'quantity'>)
+
 class ProductRepo {
   private db: DrizzleClient;
   private count: number = 0;
@@ -22,7 +24,7 @@ class ProductRepo {
     page: number,
     limit: number,
     query?: string,
-    queryKeys?: (keyof Product)[],
+    queryKeys?: ProductFilterKey[],
   ) {
     let whereClause: SQL | undefined;
 
@@ -33,7 +35,7 @@ class ProductRepo {
       whereClause = or(...conditions);
     }
 
-    const products = this.db
+    const products = await this.db
     .select()
     .from(productsTable)
     .where(whereClause)
@@ -41,7 +43,6 @@ class ProductRepo {
     .offset((page - 1) * limit)
 
     const totalPages = Math.ceil(this.count / limit);
-
 
     return {
       products,

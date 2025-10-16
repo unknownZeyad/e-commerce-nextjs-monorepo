@@ -12,10 +12,10 @@ import {
 export const productsTable = pgTable("products", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  description: text("descripti  on").notNull(),
+  description: text("description").notNull(),
   price: real("price").notNull(),
   discountPercentage: real("discount_percentage").default(0),
-  images: text("images").array(),
+  images: text("images").array().default([]),
   quantity: integer("quantity").notNull().default(0),
   createdDate: timestamp("created_date", { mode: "string" })
     .defaultNow()
@@ -26,8 +26,11 @@ export const productsTable = pgTable("products", {
   categories: integer("categories").array().notNull(), 
   variants: jsonb("variants").$type<
     {
-      name: string;
-      linked_products: number[];
+      name: string,
+      linked_products:{
+        value: string,
+        id: number
+      }[]
     }[]
   >().default([]).notNull(),
 });

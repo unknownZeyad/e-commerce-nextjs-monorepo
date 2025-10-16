@@ -1,5 +1,5 @@
-import { createCategoryAction } from "@/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createCategoryAction } from "../actions";
 
 export function useCreateCategory() {
   const queryClient = useQueryClient()
@@ -13,6 +13,7 @@ export function useCreateCategory() {
     mutationFn: createCategoryAction,
     onSuccess(data, { parentPath }) {
       queryClient.invalidateQueries({ queryKey: ['categories', parentPath] })
+      queryClient.invalidateQueries({ queryKey: ['category_full_path'] })
     },
   })
 

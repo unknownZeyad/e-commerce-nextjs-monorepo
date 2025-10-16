@@ -1,7 +1,7 @@
 'use client'
 
 import { Dispatch, useRef, useState } from "react"
-import { useGetCategories } from "./hooks/use-get-catgories"
+import { useGetCategories } from "./hooks/use-get-categories"
 import { Category } from "@packages/server/features/categories/model"
 import { Input } from "@packages/client/src/components/ui/input"
 import { Button } from "@packages/client/src/components/ui/button"

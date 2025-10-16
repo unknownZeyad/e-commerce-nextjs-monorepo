@@ -1,31 +1,65 @@
 import { useRouter, useSearchParams } from "next/navigation"
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 
-export function useURLParams () {
+export function useURLParams() {
+  const router = useRouter()
   const searchParams = useSearchParams()
 
-  const currentParams = (() => {
-    let params: Record<string, string> = {}
-    searchParams.forEach((value: string, key: string) => params = { ...params, [key]: value })
+  const updateURL = useCallback((params: URLSearchParams) => {
+    const search = params.toString()
+    const query = search ? `?${search}` : ""
+    const newUrl = `${window.location.pathname}${query}`
+    
+    router.replace(newUrl, { scroll: false })
+  }, [router])
+
+  const set = useCallback((name: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set(name, value)
+    updateURL(params)
+  }, [searchParams, updateURL])
+
+  const get = useCallback((name: string): string | null => {
+    return searchParams.get(name)
+  }, [searchParams])
+
+  const remove = useCallback((name: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete(name)
+    updateURL(params)
+  }, [searchParams, updateURL])
+
+  const setMultiple = useCallback((updates: Record<string, string>) => {
+    const params = new URLSearchParams(searchParams.toString())
+    Object.entries(updates).forEach(([key, value]) => {
+      params.set(key, value)
+    })
+    updateURL(params)
+  }, [searchParams, updateURL])
+
+  const clear = useCallback(() => {
+    router.replace(window.location.pathname, { scroll: false })
+  }, [router])
+
+  const getAll = useCallback((): Record<string, string> => {
+    const params: Record<string, string> = {}
+    searchParams.forEach((value, key) => {
+      params[key] = value
+    })
     return params
-  })()
+  }, [searchParams])
 
-  const methods = useMemo(() => ({
-    set(name: string, value: string) {
-      currentParams[name] = value
-      const stringified = Object.keys(currentParams)
-      .reduce((acc,key) => acc + `${key}=${currentParams[key]}&`,"?")
+  const has = useCallback((name: string) => searchParams.has(name), [searchParams])
 
-      const newUrl = `${window.location.pathname}?${stringified}`
-      window.history.replaceState(null, "", newUrl)
-    },
-    get(name: string) {
-      return currentParams[name]
-    },
-    delete (name: string) {
-      
-    }
-  }),[currentParams])
-
-  return methods
+  return useMemo(() => ({
+    set,
+    get,
+    delete: remove,
+    remove,
+    setMultiple,
+    clear,
+    getAll,
+    has,
+    toString
+  }), [set, get, remove, setMultiple, clear, getAll, has, toString])
 }

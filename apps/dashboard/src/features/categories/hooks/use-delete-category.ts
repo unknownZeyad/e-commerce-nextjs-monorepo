@@ -1,4 +1,4 @@
-import { deleteCategoryAction } from "@/actions";
+import { deleteCategoryAction } from "../actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useDeleteCategory() {
@@ -13,7 +13,7 @@ export function useDeleteCategory() {
   >({
     mutationFn: ({ id }) => deleteCategoryAction(id),
     onSuccess(data, { parentPath }) {
-      console.log
+      queryClient.invalidateQueries({ queryKey: ['category_full_path'] })
       queryClient.invalidateQueries({ queryKey: ['categories', parentPath] })
     },
   })
