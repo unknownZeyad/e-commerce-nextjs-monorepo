@@ -1,5 +1,5 @@
 import FormInput from '@packages/client/src/components/form/form-input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@packages/client/src/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@packages/client/src/components/ui/card'
 
 function AddProductPricing() {
   return (
@@ -11,6 +11,7 @@ function AddProductPricing() {
         <FormInput
           label='Price'
           name='price'
+          min={1}
           type='number'
           placeholder='Enter Product Price'
         />
@@ -19,11 +20,13 @@ function AddProductPricing() {
           label='Quantity'
           name='quantity'
           type='number'
+          min={1}
           placeholder='Enter Product Quantity'
         />
 
         <FormInput
           label='Discount Percent'
+          min={0}
           placeholder='Enter Product Discount'
           name='discount_percentage'
           type='number'

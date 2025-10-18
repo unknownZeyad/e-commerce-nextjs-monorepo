@@ -27,16 +27,22 @@ export function useUploadProductImages () {
     })
   }
 
+  const clearAll = () => {
+    for (const id of images) {
+      deleteFile(id)
+    }
+  }
 
   useLayoutEffect(() => {
     const local = JSON.parse(localStorage.getItem('uploading-images')!)
     if (Array.isArray(local)) setImages((local))
   },[])
 
-  useEffect(() => {
+   useEffect(() => {
     const listener = () => {
+      localStorage.setItem('uploading-images', JSON.stringify([]))  
       for (const id of images) {
-        deleteFile(id)
+        navigator.sendBeacon('/api/files/delete', JSON.stringify({ id }))
       }
     }
     window.addEventListener("beforeunload", listener);
@@ -48,6 +54,7 @@ export function useUploadProductImages () {
     uploadImage,
     deleteImage,
     isDeleting,
-    isUploading
+    isUploading,
+    clearAll
   }
 }

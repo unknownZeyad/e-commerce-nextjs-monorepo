@@ -1,6 +1,6 @@
 import { Product } from "@packages/server/features/products/model";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { getProductsAction } from "../../products/actions";
 
 export function useSearchProducts () {

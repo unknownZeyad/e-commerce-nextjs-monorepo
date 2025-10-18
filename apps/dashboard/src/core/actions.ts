@@ -3,11 +3,7 @@ import { v2 as cloudinary } from 'cloudinary'
 import { Readable } from 'stream'
 import { config } from '@/core/config'
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET
-})
+cloudinary.config(config.cloudinaryConfig)
 
 
 export async function uploadFileAction({ fileName, file }: {

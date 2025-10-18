@@ -124,10 +124,10 @@ function ProductsSearchBox (props: Omit<ComponentProps<typeof FormAsyncSearchBox
       value: id,
       label: (
         <div className="flex gap-2">
-          <div className="h-[50px] rounded-lg w-[50px] flex items-center justify-center bg-zinc-800 border border-white/10">
+          <div className="h-[50px] rounded-lg w-[50px] overflow-hidden flex items-center justify-center bg-zinc-800 border border-white/10">
             {
               images?.[0] ? 
-              <img src={images[0]}/> : 
+              <img className='h-full w-full object-cover' src={images[0]}/> : 
               <FaImage className="text-white/40 text-2xl"/>
             }
           </div>

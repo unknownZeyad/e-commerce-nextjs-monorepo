@@ -43,11 +43,11 @@ class ProductRepo {
     .offset((page - 1) * limit)
 
     const totalPages = Math.ceil(this.count / limit);
-
     return {
       products,
       totalPages,
-      currentPage: page
+      currentPage: page,
+      productsCount: this.count
     }
   }
 
@@ -57,6 +57,7 @@ class ProductRepo {
       .values(payload)
       .returning();
     this.count += 1;
+
     return product;
   }
 

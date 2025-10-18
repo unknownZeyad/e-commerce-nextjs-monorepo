@@ -11,27 +11,27 @@ const navSections = [
       {
         label: 'Analytics',
         href: '/dashboard/analytics',
-        icon: <ChartNoAxesCombined />
+        icon: <ChartNoAxesCombined className='w-[20px] aspect-square'/>
       },
       {
         label: 'Categories',
         href: '/dashboard/categories',
-        icon: <SlidersHorizontal />
+        icon: <SlidersHorizontal className='w-[20px] aspect-square'/>
       },
       {
         label: 'Orders',
         href: '/dashboard/orders',
-        icon: <ShoppingBasket />
+        icon: <ShoppingBasket className='w-[20px] aspect-square'/>
       },
       {
         label: 'Inventories',
         href: '/dashboard/inventories',
-        icon: <PackageSearch />
+        icon: <PackageSearch className='w-[20px] aspect-square'/>
       },
       {
         label: 'Products',
         href: '/dashboard/products',
-        icon: <Store />
+        icon: <Store className='w-[20px] aspect-square'/>
       },
     ]
   },
@@ -41,7 +41,7 @@ const navSections = [
       {
         label: 'Profile',
         href: '/dashboard/settings',
-        icon: <UserRound />
+        icon: <UserRound className='w-[20px] aspect-square'/>
       }
     ]
   },
@@ -50,20 +50,20 @@ const navSections = [
 function SideNav() {
   const pathname = usePathname()
   return (
-    <aside className="w-[200px] py-5 h-full overflow-auto">
+    <aside className="w-[250px] p-5 h-full overflow-auto">
       <h1 className="text-2xl font-bold uppercase">Spark</h1>
 
       <nav className='mt-20 flex flex-col gap-10'>
         {navSections.map(({ links, title },idx) => (
           <div key={idx}>
-            <h6 className='dark:text-white/50 mb-3'>{title}</h6>
+            <h6 className='dark:text-white/50 text-sm mb-3 ml-4'>{title}</h6>
             <div className='flex flex-col gap-1'>
               {links.map(({ href, icon, label }, index) => (
                 <Link
                   href={href} 
                   key={index}
                   className={cn(
-                    'flex items-center gap-3 p-3 duration-200 rounded-xl hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer dark:text-white/70',
+                    'flex text-sm items-center gap-2 p-2 pl-3 duration-200 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer dark:text-white',
                     pathname.startsWith(href) && 'dark:bg-white/10'
                   )}
                 >

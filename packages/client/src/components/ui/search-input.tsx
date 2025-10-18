@@ -26,15 +26,15 @@ export function SearchInput({ placeholder = 'Search...' }: SearchInputProps) {
   return (
     <div
       className={cn(
-        'flex items-center pl-4 w-full rounded-xl border border-input bg-[#111]',
+        'flex items-center pl-3 w-full rounded-lg border border-input bg-light-black',
       )}
     >
-      <IoSearch className="text-muted-foreground text-lg" />
+      <IoSearch className="text-muted-foreground text-xl" />
       <input
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
-        className="pl-4 py-2 text-lg w-full outline-0"
+        className="pl-3 py-2 text-lg w-full placeholder:text-base outline-0"
       />
     </div>
   )

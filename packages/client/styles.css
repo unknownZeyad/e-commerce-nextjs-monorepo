@@ -152,19 +152,19 @@ label {
 }
 
 .table {
-  @apply relative w-full flex flex-col gap-2;
+  @apply relative w-full flex border border-muted flex-col rounded-lg;
 }
 
 .table .table_header {
-  @apply sticky top-0 z-10 grid w-full gap-x-6 px-6 py-4 bg-light-black rounded-lg backdrop-blur-sm;
+  @apply sticky top-0 z-10 grid w-full border-b border-b-muted gap-x-6 px-8 py-3 bg-light-black rounded-t-lg ;
 }
 
 .table .table_header .table_cell {
-  @apply flex items-center justify-center text-center font-medium capitalize text-muted-foreground;
+  @apply flex items-center dark:text-white capitalize font-medium;
 }
 
 .table .table_body {
-  @apply flex h-full w-full flex-col divide-y divide-border/80;
+  @apply flex h-full w-full max-h-full overflow-auto flex-col divide-y divide-muted;
 }
 
 .table .table_body.empty {
@@ -172,17 +172,17 @@ label {
 }
 
 .table .table_body .table_row {
-  @apply grid w-full transition-all rounded-lg duration-200 gap-x-6 py-2 px-6 items-center ;
+  @apply grid w-full transition-all duration-200 gap-x-6 py-2 px-8 items-center;
   
   &.hoverable {
-    @apply cursor-pointer hover:bg-accent/50 hover:shadow-sm active:scale-[0.99];
+    @apply cursor-pointer hover:bg-muted hover:shadow-sm active:scale-[0.99];
   }
 }
 
 .table .table_body .table_row .table_cell {
-  @apply flex items-center justify-center text-center break-all text-sm font-medium;
+  @apply flex items-center break-all text-sm font-medium;
 }
 
 .table .table_footer {
-  @apply sticky bottom-0 w-full rounded-lg bg-light-black p-4 backdrop-blur-sm;
+  @apply sticky bottom-0 w-full border-t border-t-muted rounded-b-lg bg-light-black px-8 py-3;
 }

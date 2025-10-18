@@ -7,21 +7,24 @@ export function useGetProducts () {
   const { get } = useURLParams()
 
   const page = Number(get('page')) || 1
+  const limit = Number(get('limit')) || 10
   const query = get('search') || '' 
 
   const { data, isLoading, error } = useQuery<{
     totalPages: number,
     currentPage: number,
-    products: Product[]
+    products: Product[],
+    productsCount: number
   }>({
-    queryKey: ['products', page, query],
+    queryKey: ['products', page, query, limit],
     queryFn: () => getProductsAction({ 
       page, 
       query, 
-      limit: 10,
+      limit,
+      queryKeys: ['name']
     }),
-    staleTime: 60 * 5 * 100,
-    gcTime: 60 * 5 * 100,
+    staleTime: 60 * 5 * 1000,
+    gcTime: 60 * 5 * 1000,
   })
 
   return { data, isLoading, error }

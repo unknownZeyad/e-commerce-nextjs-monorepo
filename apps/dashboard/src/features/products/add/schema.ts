@@ -7,9 +7,10 @@ export const addProductFormSchema = z.object({
   name: z.string().refine(v => v.length > 3, 'Product Name Must Be More than 3 Characters.'),
   description: z.string().refine(v => v.length > 3, 'Product Description Must Be More than 3 Characters.'),
   price: z.string().regex(onlyNumbersRegex, 'Price Must Be A Valid Number.'),
-  discount_percentage: z.string().regex(onlyNumbersRegex, 'Discount Percentage Must Be a Number From 0 to 100.'),
+  discount_percentage: z.string().regex(onlyNumbersRegex, 'Discount Percentage Must Be a Number From 0 to 100.').optional().default('0'),
   quantity: z.string().regex(positiveNumberRegex, 'Quantity Must Be A Positive Number.'),
   full_category_path: z.string(),
+  images: z.array(z.string()),
   variants: z.array(
     z.object({
       name: z.string(),

@@ -1,7 +1,7 @@
 'use server'
 
 import { categoryService } from "@packages/server/features/categories/services"
-import { ProductFilterKey, productRepo } from "@packages/server/features/products/repo"
+import { productRepo } from "@packages/server/features/products/repo"
 import { addProductFormSchema } from "./schema"
 import z from "zod"
 
@@ -21,9 +21,6 @@ const addProductSchema = addProductFormSchema.extend({
 })
 
 
-
-
-
 export async function createProductAction({ full_category_path, ...rest }: z.infer<typeof addProductSchema>) {
   addProductSchema.parse({
     ...rest,
@@ -39,7 +36,8 @@ export async function createProductAction({ full_category_path, ...rest }: z.inf
     price: +rest.price,
     quantity: +rest.quantity,
     discountPercentage: +rest.discount_percentage,
-    variants: rest.variants
+    variants: rest.variants,
+    images: rest.images
   })
 }
 
