@@ -21,7 +21,7 @@ function AddProduct() {
   function handleSubmit (data: AddProductFormFields) {
     create({
       ...data,
-      full_category_path: data.full_category_path,
+      category_full_path: data.category_full_path,
       variants: data.variants.map(({ linked_products, name }) => ({
         name,
         linked_products: linked_products.map(({ variant, variant_name }) => ({

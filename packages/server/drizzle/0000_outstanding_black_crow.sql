@@ -17,7 +17,7 @@ CREATE TABLE "products" (
 	"quantity" integer DEFAULT 0 NOT NULL,
 	"created_date" timestamp DEFAULT now() NOT NULL,
 	"updated_date" timestamp DEFAULT now() NOT NULL,
-	"categories" integer[] NOT NULL,
+	"category_full_path" text NOT NULL,
 	"variants" jsonb DEFAULT '[]'::jsonb NOT NULL
 );
 --> statement-breakpoint

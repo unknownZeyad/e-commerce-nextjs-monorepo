@@ -91,7 +91,7 @@ label {
     --foreground: oklch(98.5% 0 0);
     --card: oklch(20.5% 0 0);
     --card-foreground: oklch(98.5% 0 0);
-    --popover: oklch(26.9% 0 0);
+    --popover: #111;
     --popover-foreground: oklch(98.5% 0 0);
     --primary: oklch(92.2% 0 0);
     --primary-foreground: oklch(20.5% 0 0);

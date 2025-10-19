@@ -41,9 +41,9 @@ function SelectCategoryField () {
 
   useEffect(() => {
     if (selectedCategory) {
-      setValue('full_category_path',selectedCategory.parentPath+selectedCategory.id)
+      setValue('category_full_path',selectedCategory.parentPath+selectedCategory.id)
     }else {
-      setValue('full_category_path', undefined!)
+      setValue('category_full_path', undefined!)
     }
   },[selectedCategory])
 

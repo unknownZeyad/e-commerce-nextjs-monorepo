@@ -23,7 +23,7 @@ export const productsTable = pgTable("products", {
   updatedDate: timestamp("updated_date", { mode: "string" })
     .defaultNow()
     .notNull(),
-  categories: integer("categories").array().notNull(), 
+  categoryFullPath: text("category_full_path").notNull(), 
   variants: jsonb("variants").$type<
     {
       name: string,

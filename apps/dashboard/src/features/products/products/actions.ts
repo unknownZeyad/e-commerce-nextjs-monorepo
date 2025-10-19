@@ -1,12 +1,12 @@
 'use server'
 
-import { ProductFilterKey, productRepo } from "@packages/server/features/products/repo"
+import { Product } from "@packages/server/features/products/model"
+import { productRepo } from "@packages/server/features/products/repo"
 
-export async function getProductsAction({ limit, page, query, queryKeys }: { 
+export async function getProductsAction({ limit, page, filters }: { 
   page: number, 
   limit: number, 
-  query?: string, 
-  queryKeys?: ProductFilterKey[]
+  filters?: Partial<Product>
 }) {
-  return await productRepo.getAll(page, limit, query, queryKeys)
+  return await productRepo.getAll(page, limit, filters)
 }

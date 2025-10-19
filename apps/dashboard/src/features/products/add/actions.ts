@@ -21,23 +21,18 @@ const addProductSchema = addProductFormSchema.extend({
 })
 
 
-export async function createProductAction({ full_category_path, ...rest }: z.infer<typeof addProductSchema>) {
-  addProductSchema.parse({
-    ...rest,
-    full_category_path
-  });
-  const categoriesPath = await categoryService.getCategoriesFullPath(full_category_path)
-  const categories = categoriesPath.map((c) => c.id) 
+export async function createProductAction(payload: z.infer<typeof addProductSchema>) {
+  addProductSchema.parse(payload);
 
   await productRepo.create({
-    categories,
-    description: rest.description,
-    name: rest.name,
-    price: +rest.price,
-    quantity: +rest.quantity,
-    discountPercentage: +rest.discount_percentage,
-    variants: rest.variants,
-    images: rest.images
+    categoryFullPath: payload.category_full_path,
+    description: payload.description,
+    name: payload.name,
+    price: +payload.price,
+    quantity: +payload.quantity,
+    discountPercentage: +payload.discount_percentage,
+    variants: payload.variants,
+    images: payload.images
   })
 }
 

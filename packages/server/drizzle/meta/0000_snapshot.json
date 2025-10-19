@@ -1,5 +1,5 @@
 {
-  "id": "919dfd64-beed-40b4-95f0-98e31b1187b9",
+  "id": "84a7249d-03d6-44ec-ba16-b8b92b03e88d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -132,9 +132,9 @@
           "notNull": true,
           "default": "now()"
         },
-        "categories": {
-          "name": "categories",
-          "type": "integer[]",
+        "category_full_path": {
+          "name": "category_full_path",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },

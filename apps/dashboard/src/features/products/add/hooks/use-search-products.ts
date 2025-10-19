@@ -18,8 +18,9 @@ export function useSearchProducts () {
       const { products } = await mutateAsync({ 
         limit: 5, 
         page: 1, 
-        query, 
-        queryKeys: ['name'] 
+        filters: {
+          name: query
+        }
       })
 
       qc.setQueryData(key, products);

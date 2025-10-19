@@ -1,8 +1,6 @@
 import { db, DrizzleClient } from "../../core/lib/db";
-import { eq, like, or, count, SQL } from "drizzle-orm";
+import { eq, ilike, or, count, SQL, and, inArray } from "drizzle-orm";
 import { InsertProduct, Product, productsTable } from "./model";
-
-export type ProductFilterKey = (keyof Omit<Product, 'price' | 'discountPercentage' | 'images' | 'quantity'>)
 
 class ProductRepo {
   private db: DrizzleClient;
@@ -23,16 +21,29 @@ class ProductRepo {
   public async getAll(
     page: number,
     limit: number,
-    query?: string,
-    queryKeys?: ProductFilterKey[],
+    filters?: Partial<Product>,
   ) {
     let whereClause: SQL | undefined;
+    console.log(filters)
+    if (filters && Object.keys(filters).length > 0) {
+      const conditions: SQL[] = [];
 
-    if (query && queryKeys?.length) {
-      const conditions = queryKeys.map((key) =>
-        like(productsTable[key as keyof Product], `%${query}%`)
-      );
-      whereClause = or(...conditions);
+      for (const [key, value] of Object.entries(filters)) {
+        if (value === undefined || value === null || value === "") continue;
+
+        const column = productsTable[key as keyof Product] as any;
+        if (!column) continue;
+
+        if (Array.isArray(value)) {
+          conditions.push(inArray(column, value));
+        } else if (typeof value === "string") {
+          conditions.push(ilike(column, `%${value}%`));
+        } else {
+          conditions.push(eq(column, value));
+        }
+      }
+
+      if (conditions.length > 0) whereClause = and(...conditions);
     }
 
     const products = await this.db

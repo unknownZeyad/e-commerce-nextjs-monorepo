@@ -56,7 +56,7 @@ export function SearchBox({
           padding: 0
         }} 
       >
-        <div className="flex h-full w-full flex-col overflow-hidden rounded-md bg-[#111] text-popover-foreground">
+        <div className="flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground">
           <div className="flex items-center border-b border-white/10 px-3">
             <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
             <input

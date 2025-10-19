@@ -9,7 +9,7 @@ export const addProductFormSchema = z.object({
   price: z.string().regex(onlyNumbersRegex, 'Price Must Be A Valid Number.'),
   discount_percentage: z.string().regex(onlyNumbersRegex, 'Discount Percentage Must Be a Number From 0 to 100.').optional().default('0'),
   quantity: z.string().regex(positiveNumberRegex, 'Quantity Must Be A Positive Number.'),
-  full_category_path: z.string(),
+  category_full_path: z.string(),
   images: z.array(z.string()),
   variants: z.array(
     z.object({
