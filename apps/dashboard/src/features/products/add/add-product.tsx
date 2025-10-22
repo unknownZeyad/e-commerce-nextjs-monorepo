@@ -11,17 +11,30 @@ import { Button } from '@packages/client/src/components/ui/button'
 import { useCreateProduct } from './hooks/use-create-product'
 import ImageUpload from './components/image-upload'
 import AddProductVariants from './components/variants'
+import AddProductHeader from './components/header'
 
 function AddProduct() {
+  return (
+    <>
+      <AddProductHeader/>
+      <ProductForm/>
+    </>
+  )
+}
+
+export default AddProduct
+
+
+function ProductForm () {
   const { create, isPending } = useCreateProduct()
   const methods = useForm<AddProductFormFields>({
     resolver: zodResolver(addProductFormSchema)
   })
 
   function handleSubmit (data: AddProductFormFields) {
+    if (!isPending)
     create({
       ...data,
-      category_full_path: data.category_full_path,
       variants: data.variants.map(({ linked_products, name }) => ({
         name,
         linked_products: linked_products.map(({ variant, variant_name }) => ({
@@ -59,14 +72,10 @@ function AddProduct() {
         >
           Cancel
         </Button>
-        <Button>
+        <Button disabled={isPending}>
           Create
         </Button>
       </div>
     </Form>
   )
 }
-
-export default AddProduct
-
-

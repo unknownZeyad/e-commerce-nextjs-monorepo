@@ -1,7 +1,7 @@
 import FormInput from '@packages/client/src/components/form/form-input'
 import { Card, CardContent, CardHeader, CardTitle } from '@packages/client/src/components/ui/card'
 import FormTextarea from '@packages/client/src/components/form/form-textarea'
-import SelectCategoryDialog from '../../components/select-category-dialog'
+import SelectCategoryDialog from './select-category-dialog'
 import { useEffect, useState } from 'react'
 import { Category } from '@packages/server/features/categories/model'
 import { useFormContext } from 'react-hook-form'

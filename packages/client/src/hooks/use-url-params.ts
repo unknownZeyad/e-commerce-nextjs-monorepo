@@ -23,9 +23,10 @@ export function useURLParams() {
     return searchParams.get(name)
   }, [searchParams])
 
-  const remove = useCallback((name: string) => {
+  const remove = useCallback((names: string | string[]) => {
     const params = new URLSearchParams(searchParams.toString())
-    params.delete(name)
+    const keys = Array.isArray(names) ? names : [names]
+    keys.forEach((key) => params.delete(key))
     updateURL(params)
   }, [searchParams, updateURL])
 
@@ -54,12 +55,12 @@ export function useURLParams() {
   return useMemo(() => ({
     set,
     get,
-    delete: remove,
     remove,
     setMultiple,
     clear,
     getAll,
     has,
-    toString
+    toString,
+    delete: remove
   }), [set, get, remove, setMultiple, clear, getAll, has, toString])
 }

@@ -13,11 +13,12 @@ export function useSearchProducts () {
     try {
       const key = ['search_products', query]
       const cached = qc.getQueryData<Product[]>(key)  
-        console.log(cached)
+
       if (cached !== undefined) return cached
       const { products } = await mutateAsync({ 
         limit: 5, 
         page: 1, 
+        columns: ['images','name', 'price', 'quantity', 'id'],
         filters: {
           name: query
         }

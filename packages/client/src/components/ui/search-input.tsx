@@ -34,7 +34,7 @@ export function SearchInput({ placeholder = 'Search...' }: SearchInputProps) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
-        className="pl-3 py-2 text-lg w-full placeholder:text-base outline-0"
+        className="pl-3 py-2 pr-2 text-lg w-full placeholder:text-base outline-0"
       />
     </div>
   )

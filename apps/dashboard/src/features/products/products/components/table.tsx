@@ -1,4 +1,5 @@
 'use client'
+
 import Table from "@packages/client/src/components/ui/table"
 import { useGetProducts } from "../hooks/use-get-products"
 import { formatDate } from "@/core/lib/utils"

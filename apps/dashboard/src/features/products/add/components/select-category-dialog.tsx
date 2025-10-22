@@ -75,7 +75,7 @@ function SelectCategoryButton ({ setIsOpen }: {
   const { selectedCategory } = useContext(Context)
   const isSelected = !!selectedCategory
   const fullPath = isSelected ? selectedCategory?.parentPath + selectedCategory?.id : ''
-  const { data, isLoading, error } = useGetCategoryFullPath(fullPath, isSelected)
+  const { data, isLoading } = useGetCategoryFullPath(fullPath, isSelected)
 
   const open = () => setIsOpen(true)
 
@@ -92,7 +92,7 @@ function SelectCategoryButton ({ setIsOpen }: {
         type="button" 
       >
         {
-          isSelected ? (
+          (isSelected && !isLoading) ? (
             <div className="flex-wrap flex gap-2">
               {
                 data?.map((curr, index) => (
@@ -121,7 +121,6 @@ function SubTree ({ category }: {
   const [expanded, setExpanded] = useState<boolean>(isDefaultOpen)
   const { data, isLoading } = useGetCategories(parentPath + id + '/', expanded)
 
-  
   const toggleExpansion = () => setExpanded((prev) => !prev)
   const isChecked = category.id === selectedCategory?.id
 

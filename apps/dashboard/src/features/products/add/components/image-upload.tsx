@@ -16,8 +16,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@packages/client/src/components/ui/carousel"
 
 function ImageUpload() {
@@ -70,8 +68,8 @@ function ImageUpload() {
                     />
                     <IoMdClose
                       onClick={() => deleteImage(curr)} 
-                      className="text-white absolute mix-blend-difference cursor-pointer top-4 right-2 hover:bg-black/60 
-                      duration-150 text-2xl p-1 rounded group-hover:opacity-100 opacity-0"
+                      className="text-white absolute cursor-pointer top-4 right-2 bg-red-600 hover:bg-red-700
+                      duration-150 text-xl p-1 rounded group-hover:opacity-100 opacity-0"
                     />
                   </CarouselItem>
                 ))}

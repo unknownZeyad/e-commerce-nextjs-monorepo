@@ -1,46 +1,45 @@
 'use client'
 
-import { Dispatch, useRef, useState } from "react"
-import { useGetCategories } from "./hooks/use-get-categories"
+import { Dispatch, memo, SetStateAction, useRef, useState } from "react"
+import { useGetCategories } from "../hooks/use-get-categories"
 import { Category } from "@packages/server/features/categories/model"
 import { Input } from "@packages/client/src/components/ui/input"
-import { Button } from "@packages/client/src/components/ui/button"
 import { Check, ChevronRight, Plus, Trash2, X } from 'lucide-react';
 import { cn } from "@packages/client/src/lib/utils"
-import { useCreateCategory } from "./hooks/use-create-category"
-import { useDeleteCategory } from "./hooks/use-delete-category"
-import { useEditCategory } from "./hooks/use-edit-category"
+import { useDeleteCategory } from "../hooks/use-delete-category"
+import { useEditCategory } from "../hooks/use-edit-category"
 import { RiBallPenFill } from "react-icons/ri";
+import { useCreateCategory } from "../hooks/use-create-category"
+import { Popover, PopoverContent, PopoverTrigger } from "@packages/client/src/components/ui/popover"
+import { BsThreeDotsVertical } from "react-icons/bs";
 
-function CategoriesTree() {
-  const [isCreating, setIsCreating] = useState<boolean>(false)
+function CategoriesTree({ isCreating, setIsCreating }:{
+  isCreating: boolean, 
+  setIsCreating: Dispatch<SetStateAction<boolean>>
+}) {
   const { data } = useGetCategories('')
 
-  return (
-    <div>
-      <div className="flex justify-between mb-2">
-        <h1 className="text-xl mb-4">Categories</h1>
-        <Button
-          variant='secondary'
-          onClick={() => setIsCreating(true)}
-        >Add Base Category</Button>
-      </div>
-      <ul className="pl-4 border-l relative border-black/30 dark:border-white/30 space-y-1 ml-6">
-        {data?.map(category => (
-          <SubTree key={category.id} category={category} />
-        ))}
-        {
-          isCreating && (
-            <CreateCategoryField 
-              setIsCreating={setIsCreating}
-              parentPath=''
-            />
-          )
-        }
-      </ul>
-    </div>
+  return data?.length ? (
+    <ul className="pl-4 border-l relative border-black/30 dark:border-white/30 space-y-1 ml-6">
+      {data.map(category => (
+        <SubTree key={category.id} category={category} />
+      ))}
+      {isCreating && (
+        <CreateCategoryField 
+          setIsCreating={setIsCreating}
+          parentPath=''
+        />  
+      )}
+    </ul>
+  ) : (
+    <p className="text-zinc-400">
+      No Categories To Show, Start Creating.
+    </p>
   )
 }
+
+export default memo(CategoriesTree)
+
 
 function SubTree ({ category }: {
   category: Category
@@ -97,19 +96,10 @@ function SubTree ({ category }: {
                   )}
                 />
               </button>
-              <Plus  
-                className="w-[30px] h-[30px] rounded-lg cursor-pointer p-1 dark:hover:bg-white/10"
-                onClick={add}
-              />
-
-              <Trash2  
-                className="w-[30px] h-[30px] rounded-lg cursor-pointer text-red-600 p-1 dark:hover:bg-red-500/20"
-                onClick={() => deleteCategory(id)}
-              />
-              
-              <RiBallPenFill  
-                className="w-[30px] h-[30px] rounded-lg cursor-pointer text-yellow-600 p-1 dark:hover:bg-yellow-500/20"
-                onClick={() => setIsEditing(true)}
+              <ManageMenu
+                addCategory={add}
+                deleteCategory={() => deleteCategory(id)}
+                editCategory={() => setIsEditing(true)}
               />
             </>
           )
@@ -127,7 +117,7 @@ function SubTree ({ category }: {
           }
           {
             isCreating && (
-              <CreateCategoryField 
+              <CreateCategoryField
                 parentId={id}
                 setIsCreating={setIsCreating}
                 parentPath={parentPath + id + '/'}
@@ -140,7 +130,6 @@ function SubTree ({ category }: {
   )   
 }
 
-export default CategoriesTree
 
 
 function EditCategoryField ({ setIsEditing, category }: {
@@ -184,7 +173,8 @@ function EditCategoryField ({ setIsEditing, category }: {
   )
 }
 
-function CreateCategoryField ({ parentPath, setIsCreating, parentId }: {
+
+export function CreateCategoryField ({ parentPath, setIsCreating, parentId }: {
   parentPath: string,
   setIsCreating: Dispatch<React.SetStateAction<boolean>>,
   parentId?: number
@@ -207,13 +197,13 @@ function CreateCategoryField ({ parentPath, setIsCreating, parentId }: {
     <li className="mt-2 pl-6">
       <div className="absolute left-0 bottom-5 w-[32px] h-[1px] bg-black/30 dark:bg-white/30"/>
       <div className="flex items-center gap-2">
-        <Input 
+        <Input
           className="w-[250px]" 
           type="text" 
           ref={inputRef} 
           placeholder="Enter Category Name"
         />
-        <X 
+        <X
           onClick={() => setIsCreating(false)}
           className="hover:bg-red-500/20 bg-red-500/10 duration-150 text-red-500 cursor-pointer p-1 w-[25px] h-[25px] rounded-lg" 
         />
@@ -223,5 +213,50 @@ function CreateCategoryField ({ parentPath, setIsCreating, parentId }: {
         />
       </div>
     </li>
+  )
+}
+
+function ManageMenu ({ deleteCategory, editCategory, addCategory }: {
+  deleteCategory: () => void,
+  editCategory: () => void,
+  addCategory: () => void,
+}) {
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  return (
+    <Popover
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
+      <PopoverTrigger>
+        <BsThreeDotsVertical className="text-2xl p-1 hover:bg-white/15 duration-150 rounded cursor-pointer"/>
+      </PopoverTrigger>
+      <PopoverContent 
+        onClick={() => setIsOpen(false)} 
+        className="p-2"
+      >
+        <div 
+          onClick={addCategory} 
+          className="w-full py-1 px-2 flex text-sm items-center gap-2 rounded hover:bg-white/10 cursor-pointer duration-150"
+        >
+          <Plus className="w-[15px] h-[15px]"/>
+          Add Subcategory
+        </div>
+        <div 
+          onClick={deleteCategory}
+          className="w-full py-1 px-2 flex text-sm items-center gap-2 rounded hover:bg-white/10 cursor-pointer duration-150"
+        >
+          <Trash2 className="w-[15px] h-[15px]"/>
+          Delete Category
+        </div>
+
+        <div 
+          onClick={editCategory}
+          className="w-full py-1 px-2 flex text-sm items-center gap-2 rounded hover:bg-white/10 cursor-pointer duration-150"
+        >
+          <RiBallPenFill className="w-[15px] h-[15px]"/>
+          Edit Category
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }

@@ -65,7 +65,7 @@ function SubCategoriesDropDown ({ category }: {
   const { id, parentPath, name } = category
   const [expanded, setExpanded] = useState<boolean>(false)
   const { data } = useGetCategories(parentPath + id + '/', expanded)
-  const { get, setMultiple } = useURLParams()
+  const { get, setMultiple, remove } = useURLParams()
   
   const isSelected = get('category-path') === `${parentPath}${id}`
 
@@ -75,10 +75,14 @@ function SubCategoriesDropDown ({ category }: {
         className={cn(isSelected && 'bg-white/10')}
         onMouseEnter={() => setExpanded(true)}
         onClick={() => {
-          setMultiple({
-            'category-path': `${parentPath}${id}`,
-            'category-label': name
-          })
+          if (!isSelected) {
+            setMultiple({
+              'category-path': `${parentPath}${id}`,
+              'category-label': name
+            })
+          }else {
+            remove(['category-path', 'category-label'])
+          }
         }}
       >
         <Checkbox checked={isSelected}/>

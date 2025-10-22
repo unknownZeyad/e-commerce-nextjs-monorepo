@@ -1,6 +1,5 @@
 'use server'
 
-import { categoryService } from "@packages/server/features/categories/services"
 import { productRepo } from "@packages/server/features/products/repo"
 import { addProductFormSchema } from "./schema"
 import z from "zod"

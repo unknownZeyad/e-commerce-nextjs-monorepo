@@ -21,10 +21,11 @@ export function useGetProducts () {
     queryFn: () => getProductsAction({ 
       page, 
       limit,
+      columns: ['id', 'name', 'price', 'quantity', 'images', 'discountPercentage', 'createdDate'], 
       filters: {
         name: query,
         categoryFullPath
-      }
+      },
     }),
     staleTime: 60 * 5 * 1000,
     gcTime: 60 * 5 * 1000,

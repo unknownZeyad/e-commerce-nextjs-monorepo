@@ -72,7 +72,7 @@ export function SearchBox({
               <li
                 className={cn(
                   "relative hover:bg-white/10 flex cursor-default gap-2 select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
-                  option.value === value?.value && 'bg-white/10'
+                  value && (option.value === value.value) && 'bg-white/10'
                 )}
                 key={option.value}
                 value={option.value}

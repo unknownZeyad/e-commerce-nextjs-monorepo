@@ -1,8 +1,8 @@
-import CategoriesTree from "@/features/categories/categories-tree"
+import Categories from "@/features/categories/categories"
 
 function Page() {
   return (
-    <CategoriesTree/>
+    <Categories/>
   )
 }
 

@@ -2,9 +2,9 @@ import { ComponentProps } from "react"
 import { FieldValues, FormProvider, UseFormReturn } from "react-hook-form"
 
 
-type TFormProps<TFields extends FieldValues> = {
-  form: UseFormReturn<TFields>,
-  handleSubmit: (fields:TFields) => void
+type FormProps<Fields extends FieldValues> = {
+  form: UseFormReturn<Fields>,
+  handleSubmit: (fields:Fields) => void
 } & ComponentProps<"form">
 
 export default function Form <T extends FieldValues>({ 
@@ -12,7 +12,7 @@ export default function Form <T extends FieldValues>({
   children, 
   handleSubmit:onSubmit,
   ...props 
-}: TFormProps<T>) {
+}: FormProps<T>) {
   return (
     <FormProvider {...form}>
       <form 

@@ -1,8 +1,8 @@
 import { db, DrizzleClient } from "../../core/lib/db";
 import { eq, ilike, or, count, SQL, and, inArray } from "drizzle-orm";
-import { InsertProduct, Product, productsTable } from "./model";
+import { Admin, adminsTable, InsertAdmin } from "./model";
 
-class ProductRepo {
+class AdminRepo {
   private db: DrizzleClient;
   private count: number = 0;
 
@@ -14,30 +14,23 @@ class ProductRepo {
   private async init() {
     const [{ value }] = await this.db
       .select({ value: count() })
-      .from(productsTable);
+      .from(adminsTable);
     this.count = value;
   }
 
   public async getAll(
     page: number,
     limit: number,
-    columns: (keyof Product)[],
-    filters?: Partial<Product>,
+    filters?: Partial<Admin>,
   ) {
-    let whereClause: SQL | undefined;
-    
-    const selection = columns.reduce((acc, curr) => ({
-      ...acc,
-      [curr]: productsTable[curr]
-    }),{})
-
+    let whereClause: SQL | undefined;    
     if (filters && Object.keys(filters).length > 0) {
       const conditions: SQL[] = [];
 
       for (const [key, value] of Object.entries(filters)) {
         if (value === undefined || value === null || value === "") continue;
 
-        const column = productsTable[key as keyof Product] as any;
+        const column = adminsTable[key as keyof Admin] as any;
         if (!column) continue;
 
         if (typeof value === "string") {
@@ -50,57 +43,63 @@ class ProductRepo {
       if (conditions.length > 0) whereClause = and(...conditions);
     }
 
-    const products = await this.db
-    .select(selection)
-    .from(productsTable)
+    const admins = await this.db
+    .select()
+    .from(adminsTable)
     .where(whereClause)
     .limit(limit)
-    .offset((page - 1) * limit) as Product[]
+    .offset((page - 1) * limit)
 
     const totalPages = Math.ceil(this.count / limit);
+
     return {
-      products,
+      admins,
       totalPages,
       currentPage: page,
       productsCount: this.count
     }
   }
 
-  public async create(payload: InsertProduct) {
-    const [product] = await this.db
-      .insert(productsTable)
+  public async create(payload: InsertAdmin) {
+    await this.db
+      .insert(adminsTable)
       .values(payload)
       .returning();
     this.count += 1;
-
-    return product;
   }
 
   public async deleteById(id: number) {
-    const [product] = await this.db
-      .delete(productsTable)
-      .where(eq(productsTable.id, id))
+    const [admin] = await this.db
+      .delete(adminsTable)
+      .where(eq(adminsTable.id, id))
       .returning();
-    if (product) this.count -= 1;
-    return product ?? null;
+    if (admin) this.count -= 1;
   }
 
-  public async updateById(id: number, payload: Partial<InsertProduct>) {
-    const [product] = await this.db
-      .update(productsTable)
-      .set({ ...payload, updatedDate: new Date().toISOString() })
-      .where(eq(productsTable.id, id))
-      .returning();
-    return product ?? null;
+  public async updateById(id: number, payload: Partial<InsertAdmin>) {
+    await this.db
+    .update(adminsTable)
+    .set(payload)
+    .where(eq(adminsTable.id, id))
+    .returning();
   }
 
   public async getById(id: number) {
-    const [product] = await this.db
-      .select()
-      .from(productsTable)
-      .where(eq(productsTable.id, id));
-    return product ?? null;
+    await this.db
+    .select()
+    .from(adminsTable)
+    .where(eq(adminsTable.id, id));
   }
+
+  public async getByEmail(email: string) {
+    const [admin] = await this.db
+    .select()
+    .from(adminsTable)
+    .where(eq(adminsTable.email, email));
+
+    return admin 
+  }
+
 
   public getCount() {
     return this.count;
@@ -108,5 +107,5 @@ class ProductRepo {
 }
 
 
-export const productRepo = new ProductRepo(db)
+export const adminRepo = new AdminRepo(db)
 

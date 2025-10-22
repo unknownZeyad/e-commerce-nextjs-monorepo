@@ -1,11 +1,11 @@
 {
-  "id": "b45719ab-40c4-420a-8c44-98dbcbba9692",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "8528b3ec-fe44-4bb0-8a27-14cfd4cae5f0",
+  "prevId": "b45719ab-40c4-420a-8c44-98dbcbba9692",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.users": {
-      "name": "users",
+    "public.admins": {
+      "name": "admins",
       "schema": "",
       "columns": {
         "id": {
@@ -14,8 +14,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "phone": {
-          "name": "phone",
+        "email": {
+          "name": "email",
           "type": "varchar(20)",
           "primaryKey": false,
           "notNull": true
@@ -38,23 +38,36 @@
           "primaryKey": false,
           "notNull": false
         },
-        "created_date": {
-          "name": "created_date",
-          "type": "timestamp",
+        "profile_image": {
+          "name": "profile_image",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_super": {
+          "name": "is_super",
+          "type": "boolean",
           "primaryKey": false,
           "notNull": true,
-          "default": "now()"
+          "default": false
+        },
+        "token_version": {
+          "name": "token_version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "users_phone_unique": {
-          "name": "users_phone_unique",
+        "admins_email_unique": {
+          "name": "admins_email_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "phone"
+            "email"
           ]
         }
       },
@@ -208,6 +221,64 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "full_name": {
+          "name": "full_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "birth_date": {
+          "name": "birth_date",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_date": {
+          "name": "created_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_phone_unique": {
+          "name": "users_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phone"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
