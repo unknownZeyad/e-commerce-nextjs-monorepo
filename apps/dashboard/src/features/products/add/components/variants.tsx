@@ -9,6 +9,7 @@ import { AddProductFormFields } from "../schema";
 import { ComponentProps } from "react";;
 import { useSearchProducts } from "../hooks/use-search-products";
 import { FaImage } from "react-icons/fa6";
+import { Product } from "@packages/server/features/products/model";
 
 export default function AddProductVariants () {
   const { fields, remove, append } = useFieldArray<AddProductFormFields>({
@@ -123,20 +124,12 @@ function ProductsSearchBox (props: Omit<ComponentProps<typeof FormAsyncSearchBox
     return products.map(({ name, id, price, quantity, images }) => ({
       value: id,
       label: (
-        <div className="flex gap-2">
-          <div className="h-[50px] rounded-lg w-[50px] overflow-hidden flex items-center justify-center bg-zinc-800 border border-white/10">
-            {
-              images?.[0] ? 
-              <img className='h-full w-full object-cover' src={images[0]}/> : 
-              <FaImage className="text-white/40 text-2xl"/>
-            }
-          </div>
-          <div className="space-y-1 text-left">
-            <p>{name}</p>
-            <p className="text-[12px]">Price: {price}</p>
-            <p className="text-[12px]">Quantity: {quantity}</p>
-          </div>
-        </div>
+        <ProductSearchBoxOption 
+          images={images} 
+          name={name} 
+          price={price} 
+          quantity={quantity}
+        />
       ),
     })) 
   }
@@ -146,5 +139,28 @@ function ProductsSearchBox (props: Omit<ComponentProps<typeof FormAsyncSearchBox
       fetchOptions={loadOptions}
       {...props}
     />
+  )
+}
+export function ProductSearchBoxOption ({ images, name, price, quantity }: {
+  images: string[],
+  name: string,
+  price: number,
+  quantity: number
+}) {
+  return (
+    <div className="flex gap-2">
+      <div className="h-[50px] rounded-lg w-[50px] overflow-hidden flex items-center justify-center bg-zinc-800 border border-white/10">
+        {
+          images?.[0] ? 
+          <img className='h-full w-full object-cover' src={images[0]}/> : 
+          <FaImage className="text-white/40 text-2xl"/>
+        }
+      </div>
+      <div className="space-y-1 text-left">
+        <p>{name}</p>
+        <p className="text-[12px]">Price: {price}</p>
+        <p className="text-[12px]">Quantity: {quantity}</p>
+      </div>
+    </div>
   )
 }

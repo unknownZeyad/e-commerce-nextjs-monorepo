@@ -120,8 +120,8 @@ function Variants () {
               <p className='text-lg mb-2 font-medium'>{name}</p>
               <div className='flex gap-3'>
                 {linked_products.map((prod,idx) => (
-                  <Button asChild variant='primary'>
-                    <Link href={prod.id.toString()} key={idx}>  
+                  <Button key={idx} asChild variant='primary'>
+                    <Link href={prod.id.toString()}>  
                       {prod.value}
                     </Link>
                   </Button>

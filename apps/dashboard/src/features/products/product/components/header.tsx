@@ -2,10 +2,13 @@
 
 import { Button } from "@packages/client/src/components/ui/button";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { FaEdit } from "react-icons/fa";
 import { FaTrashAlt } from "react-icons/fa";
 
 export function ProductHeader() {
+  const { productId } = useParams<{ productId: string }>()
+
   return (
     <div className='flex items-center gap-6 mb-10 justify-between'>
       <div>
@@ -14,12 +17,12 @@ export function ProductHeader() {
       </div>
 
       <div className="w-fit flex gap-4 items-center">
-        <Link href=''>
-          <Button variant='outline' size='sm'>
+        <Button asChild variant='outline' size='sm'>        
+          <Link href={`${productId}/edit`}>
             <FaEdit className='text-white'/>
-            Edit 
-          </Button>
-        </Link>
+            Edit         
+          </Link>
+        </Button>
         <Button variant='destructive' size='sm'>
           <FaTrashAlt className='text-white'/>
           Delete 

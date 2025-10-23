@@ -1,6 +1,6 @@
 'use server'
 
-import { productRepo } from "@packages/server/features/products/repo"
+import { productService } from "@packages/server/features/products/services";
 import { addProductFormSchema } from "./schema"
 import z from "zod"
 
@@ -23,7 +23,7 @@ const addProductSchema = addProductFormSchema.extend({
 export async function createProductAction(payload: z.infer<typeof addProductSchema>) {
   addProductSchema.parse(payload);
 
-  await productRepo.create({
+  await productService.create({
     categoryFullPath: payload.category_full_path,
     description: payload.description,
     name: payload.name,

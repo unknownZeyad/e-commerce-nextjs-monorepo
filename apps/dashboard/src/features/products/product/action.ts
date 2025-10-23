@@ -1,8 +1,8 @@
 'use server'
 
-import { productRepo } from "@packages/server/features/products/repo"
+import { productService } from "@packages/server/features/products/services";
 
 export async function getProductAction (id: number) {
-  const product = await productRepo.getById(id)
+  const product = await productService.getById(id)
   return product
 }

@@ -1,7 +1,7 @@
 'use server'
 
 import { Product } from "@packages/server/features/products/model"
-import { productRepo } from "@packages/server/features/products/repo"
+import { productService } from "@packages/server/features/products/services";
 
 export async function getProductsAction({ limit, page, columns, filters }: { 
   page: number, 
@@ -9,5 +9,5 @@ export async function getProductsAction({ limit, page, columns, filters }: {
   columns: (keyof Product)[]
   filters?: Partial<Product>
 }) {
-  return await productRepo.getAll(page, limit, columns, filters)
+  return await productService.getAll(page, limit, columns, filters)
 }

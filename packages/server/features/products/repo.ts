@@ -2,6 +2,7 @@ import { db, DrizzleClient } from "../../core/lib/db";
 import { eq, ilike, or, count, SQL, and, inArray } from "drizzle-orm";
 import { InsertProduct, Product, productsTable } from "./model";
 
+
 class ProductRepo {
   private db: DrizzleClient;
   private count: number = 0;
@@ -9,6 +10,13 @@ class ProductRepo {
   constructor(db: DrizzleClient) {
     this.db = db;
     this.init();
+  }
+
+  private getSelectedCols (cols: (keyof Product)[]) {
+    return cols.reduce((acc, curr) => ({
+      ...acc,
+      [curr]: productsTable[curr]
+    }),{})
   }
 
   private async init() {
@@ -25,26 +33,17 @@ class ProductRepo {
     filters?: Partial<Product>,
   ) {
     let whereClause: SQL | undefined;
-    
-    const selection = columns.reduce((acc, curr) => ({
-      ...acc,
-      [curr]: productsTable[curr]
-    }),{})
+    const selection = this.getSelectedCols(columns)
 
     if (filters && Object.keys(filters).length > 0) {
       const conditions: SQL[] = [];
 
       for (const [key, value] of Object.entries(filters)) {
         if (value === undefined || value === null || value === "") continue;
-
         const column = productsTable[key as keyof Product] as any;
         if (!column) continue;
-
-        if (typeof value === "string") {
-          conditions.push(ilike(column, `%${value}%`));
-        } else {
-          conditions.push(eq(column, value));
-        }
+        if (typeof value === "string") conditions.push(ilike(column, `%${value}%`));
+        else conditions.push(eq(column, value));
       }
 
       if (conditions.length > 0) whereClause = and(...conditions);
@@ -94,6 +93,15 @@ class ProductRepo {
     return product ?? null;
   }
 
+  public async getAllByIds (ids: number[], columns: (keyof Product)[]) {
+    const selection = this.getSelectedCols(columns)
+
+    return await db
+    .select(selection)
+    .from(productsTable)
+    .where(inArray(productsTable.id, ids)) as Product[]
+  }
+  
   public async getById(id: number) {
     const [product] = await this.db
       .select()
@@ -108,5 +116,5 @@ class ProductRepo {
 }
 
 
-export const productRepo = new ProductRepo(db)
+export { ProductRepo }
 
