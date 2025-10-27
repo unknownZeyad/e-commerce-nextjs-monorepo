@@ -2,9 +2,8 @@ import FormInput from '@packages/client/src/components/form/form-input'
 import { Card, CardContent, CardHeader, CardTitle } from '@packages/client/src/components/ui/card'
 import FormTextarea from '@packages/client/src/components/form/form-textarea'
 import SelectCategoryDialog from './select-category-dialog'
-import { useEffect, useState } from 'react'
 import { Category } from '@packages/server/features/categories/model'
-import { useFormContext } from 'react-hook-form'
+import { useFormContext, useWatch } from 'react-hook-form'
 import { AddProductFormFields } from '../schema'
 
 function AddProductGeneralInfos() {
@@ -18,6 +17,13 @@ function AddProductGeneralInfos() {
           label='Product Name'
           placeholder='Enter Product Name'
           name='name'
+          type='text'
+        />
+
+        <FormInput
+          label='Brand Name'
+          placeholder='Enter Brand Name'
+          name='brand'
           type='text'
         />
 
@@ -36,23 +42,25 @@ function AddProductGeneralInfos() {
 export default AddProductGeneralInfos
 
 function SelectCategoryField () {
-  const { setValue } = useFormContext<AddProductFormFields>()
-  const [selectedCategory, setSelectedCategory] = useState<Category|undefined>()
+  const { setValue, control, formState: { errors } } = useFormContext<AddProductFormFields>()
+  const category = useWatch({
+    control,
+    name: 'category'
+  })
 
-  useEffect(() => {
-    if (selectedCategory) {
-      setValue('category_full_path',selectedCategory.parentPath+selectedCategory.id)
-    }else {
-      setValue('category_full_path', undefined!)
-    }
-  },[selectedCategory])
+  function setCategory (category: (Category|undefined)) {
+    setValue('category', category)
+  }
 
   return (
     <div>
       <SelectCategoryDialog
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
+        selectedCategory={category}
+        setSelectedCategory={setCategory}
       /> 
+      {errors.category && (
+        <p className='text-sm text-red-600 mt-2'>{errors.category.message}</p>
+      )}
     </div>
   )
 }

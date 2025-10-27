@@ -39,12 +39,12 @@ export function SearchBox({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger ref={ref} className="w-full" asChild>
+      <PopoverTrigger ref={ref} asChild>
         <Button
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between h-fit"
+          className="w-full justify-between h-fit overflow-hidden "
         >
           {value?.label || placeholder}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />

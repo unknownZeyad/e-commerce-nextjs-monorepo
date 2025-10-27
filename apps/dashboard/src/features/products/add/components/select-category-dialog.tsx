@@ -11,7 +11,7 @@ import { Button } from "@packages/client/src/components/ui/button"
 import { useGetCategoryFullPath } from "@/features/categories/hooks/use-get-category-full-path"
 
 const Context = createContext<{
-  setSelectedCategory: Dispatch<SetStateAction<Category|undefined>>,
+  setSelectedCategory: (category: (Category|undefined)) => void,
   selectedCategory?: Category,
   
 }>({
@@ -23,7 +23,7 @@ function SelectCategoryDialog({
   setSelectedCategory,           
   selectedCategory,
 }: {
-  setSelectedCategory: Dispatch<SetStateAction<Category|undefined>>,
+  setSelectedCategory: (category: (Category|undefined)) => void,
   selectedCategory?: Category
 }) {
   const [isOpen, setIsOpen]= useState<boolean>(false)

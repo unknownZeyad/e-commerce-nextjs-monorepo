@@ -39,7 +39,7 @@ const FormInput = forwardRef<ElementRef<typeof Input>, TFormInputProps>(
       <div className="w-full">
         {label && (
           <label
-            className={`text-sm ${error ? "error" : ""} mb-2`}
+            className={`text-sm ${error ? "text-red-500" : ""} mb-2`}
             htmlFor={inputId}
           >
             {label} {error ? <span>*</span> : ""}
@@ -48,7 +48,7 @@ const FormInput = forwardRef<ElementRef<typeof Input>, TFormInputProps>(
 
         <Input
           {...field}
-          className={cn(className, error ? "error" : "")}
+          className={cn(className, error ? "border-red-500" : "")}
           ref={ref}
           id={inputId}
           {...props}

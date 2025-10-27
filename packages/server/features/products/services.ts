@@ -1,6 +1,7 @@
-import { db } from '../../core/lib/db';
+import { db, transaction } from '../../core/infrastructure';
 import { InsertProduct, Product } from './model';
 import { ProductRepo } from './repo'
+import { InsertVariant, VariantRepo } from './variants/repo';
 
 export type ProductWithVariants = Omit<Product, 'variants'> & {
   variants: {
@@ -21,14 +22,38 @@ export type ProductWithVariants = Omit<Product, 'variants'> & {
 } | null
 
 class ProductService {
-  private repo: ProductRepo = new ProductRepo(db);
+  private productRepo: ProductRepo = new ProductRepo(db);
 
   public async getById (productId: number) {
-    return await this.repo.getById(productId)
+    return await this.productRepo.getById(productId)
   }
 
-  public async create (payload: InsertProduct) {
-    return await this.repo.create(payload)
+  public async create (product: Omit<InsertProduct, 'mainVariantId'>, variants: Omit<InsertVariant, 'productId'|'name'>[], mainVariantIndex: number) {
+    transaction(async (tx) => {
+      const variantRepo = new VariantRepo(tx);
+      const productRepo = new ProductRepo(tx);
+      const createdProduct = await productRepo.create({
+        ...product,
+        mainVariantId: 0
+      })
+
+      const insertedVariants: InsertVariant[] = variants.map((variant) => ({
+        ...variant,
+        name: product.name + variant.defaultSku.split('-').join(' - '),
+        productId: createdProduct.id,
+        price: variant.price || product.price,
+        defaultSku: createdProduct.id + '_' + variant.defaultSku 
+      }))
+
+      const createdVariants = await variantRepo.create(insertedVariants)
+      const mainVariant = createdVariants[mainVariantIndex]
+
+      await productRepo.updateById(createdProduct.id, {
+        mainVariantId: mainVariant.id
+      })
+    }, {
+      isolationLevel: 'read committed',
+    })
   }
 
   public async getAll (
@@ -37,52 +62,19 @@ class ProductService {
     columns: (keyof Product)[],
     filters?: Partial<Product>,
   ) {
-    return await this.repo.getAll(page, limit, columns, filters)
-  }
-
-  public async getProductByIdWithVariants (productId: number) {
-    const product = await this.repo.getById(productId) 
-
-    if (!product) return null
-    if (!product.variants?.length) return product as unknown as ProductWithVariants
-
-    const linkedIds = product.variants.flatMap((variant) =>
-      variant.linked_products.map((lp) => lp.id)
-    )
-
-    if (!linkedIds.length) return product as unknown as ProductWithVariants
-
-    const linkedProducts = await this.repo.getAllByIds(
-      linkedIds, 
-      ['name', 'id', 'images', 'quantity', 'price']
-    )
-
-    const productMap = new Map(linkedProducts.map(p => [p.id, p]))
-
-    const enrichedVariants = product.variants.map(({ linked_products, name }) => ({
-      name,
-      linked_products: linked_products.map(({ value, id }) => ({
-        value: value,
-        product: productMap.get(id) ?? null
-      }))
-    }))
-
-    return {
-      ...product,
-      variants: enrichedVariants
-    } as ProductWithVariants
+    return await this.productRepo.getAll(page, limit, columns, filters)
   }
   
   public async updateById (id: number, payload: Partial<InsertProduct>) {
-    return await this.repo.updateById(id, payload)
+    return await this.productRepo.updateById(id, payload)
   }
 
   public async deleteById (productId: number) {
-    return await this.repo.deleteById(productId)
+    return await this.productRepo.deleteById(productId)
   }
 
   public getCount () {
-    return this.repo.getCount()
+    return this.productRepo.getCount()
   }
 }
 

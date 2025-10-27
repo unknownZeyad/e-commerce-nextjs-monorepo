@@ -40,7 +40,7 @@ const FormTextarea = forwardRef<ElementRef<typeof Textarea>, TFormTextareaProps>
       <div className="w-full">
         {label && (
           <label
-            className={`text-sm mb-2 ${error ? "error" : ""}`}
+            className={`text-sm mb-2 ${error ? "text-red-500" : ""}`}
             htmlFor={inputId}
           >
             {label} {error ? <span>*</span> : ""}
@@ -49,7 +49,7 @@ const FormTextarea = forwardRef<ElementRef<typeof Textarea>, TFormTextareaProps>
 
         <Textarea
           {...field}
-          className={cn(className, error ? "error" : "")}
+          className={cn(className, error ? "border-red-500" : "")}
           ref={ref}
           id={inputId}
           {...props}

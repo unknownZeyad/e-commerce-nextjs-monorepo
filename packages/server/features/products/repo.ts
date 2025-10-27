@@ -1,39 +1,41 @@
-import { db, DrizzleClient } from "../../core/lib/db";
-import { eq, ilike, or, count, SQL, and, inArray } from "drizzle-orm";
+import { AnyClient } from "../../core/infrastructure";
+import { eq, ilike, count, SQL, and, inArray } from "drizzle-orm";
 import { InsertProduct, Product, productsTable } from "./model";
 
-
 class ProductRepo {
-  private db: DrizzleClient;
-  private count: number = 0;
+  private client: AnyClient;
+  static count: number = 0;
 
-  constructor(db: DrizzleClient) {
-    this.db = db;
+  constructor(client: AnyClient) {
+    this.client = client;
     this.init();
   }
 
-  private getSelectedCols (cols: (keyof Product)[]) {
-    return cols.reduce((acc, curr) => ({
-      ...acc,
-      [curr]: productsTable[curr]
-    }),{})
+  private getSelectedCols(cols: (keyof Product)[]) {
+    return cols.reduce(
+      (acc, curr) => ({
+        ...acc,
+        [curr]: productsTable[curr],
+      }),
+      {}
+    );
   }
 
   private async init() {
-    const [{ value }] = await this.db
+    const [{ value }] = await this.client
       .select({ value: count() })
       .from(productsTable);
-    this.count = value;
+    ProductRepo.count = value;
   }
 
   public async getAll(
     page: number,
     limit: number,
     columns: (keyof Product)[],
-    filters?: Partial<Product>,
+    filters?: Partial<Product>
   ) {
     let whereClause: SQL | undefined;
-    const selection = this.getSelectedCols(columns)
+    const selection = this.getSelectedCols(columns);
 
     if (filters && Object.keys(filters).length > 0) {
       const conditions: SQL[] = [];
@@ -42,50 +44,56 @@ class ProductRepo {
         if (value === undefined || value === null || value === "") continue;
         const column = productsTable[key as keyof Product] as any;
         if (!column) continue;
-        if (typeof value === "string") conditions.push(ilike(column, `%${value}%`));
-        else conditions.push(eq(column, value));
+
+        if (typeof value === "string") {
+          conditions.push(ilike(column, `%${value}%`));
+        } else {
+          conditions.push(eq(column, value));
+        }
       }
 
-      if (conditions.length > 0) whereClause = and(...conditions);
+      if (conditions.length > 0) {
+        whereClause = and(...conditions);
+      }
     }
 
-    const products = await this.db
-    .select(selection)
-    .from(productsTable)
-    .where(whereClause)
-    .limit(limit)
-    .offset((page - 1) * limit) as Product[]
+    const products = (await this.client
+      .select(selection)
+      .from(productsTable)
+      .where(whereClause)
+      .limit(limit)
+      .offset((page - 1) * limit)) as Product[];
 
-    const totalPages = Math.ceil(this.count / limit);
+    const totalPages = Math.ceil(ProductRepo.count / limit);
+
     return {
       products,
       totalPages,
       currentPage: page,
-      productsCount: this.count
-    }
+      productsCount: ProductRepo.count,
+    };
   }
 
   public async create(payload: InsertProduct) {
-    const [product] = await this.db
+    const [product] = await this.client
       .insert(productsTable)
       .values(payload)
       .returning();
-    this.count += 1;
-
+    ProductRepo.count += 1;
     return product;
   }
 
   public async deleteById(id: number) {
-    const [product] = await this.db
+    const [product] = await this.client
       .delete(productsTable)
       .where(eq(productsTable.id, id))
       .returning();
-    if (product) this.count -= 1;
+    if (product) ProductRepo.count -= 1;
     return product ?? null;
   }
 
   public async updateById(id: number, payload: Partial<InsertProduct>) {
-    const [product] = await this.db
+    const [product] = await this.client
       .update(productsTable)
       .set({ ...payload, updatedDate: new Date().toISOString() })
       .where(eq(productsTable.id, id))
@@ -93,17 +101,17 @@ class ProductRepo {
     return product ?? null;
   }
 
-  public async getAllByIds (ids: number[], columns: (keyof Product)[]) {
-    const selection = this.getSelectedCols(columns)
+  public async getAllByIds(ids: number[], columns: (keyof Product)[]) {
+    const selection = this.getSelectedCols(columns);
 
-    return await db
-    .select(selection)
-    .from(productsTable)
-    .where(inArray(productsTable.id, ids)) as Product[]
+    return (await this.client
+      .select(selection)
+      .from(productsTable)
+      .where(inArray(productsTable.id, ids))) as Product[];
   }
-  
+
   public async getById(id: number) {
-    const [product] = await this.db
+    const [product] = await this.client
       .select()
       .from(productsTable)
       .where(eq(productsTable.id, id));
@@ -111,10 +119,8 @@ class ProductRepo {
   }
 
   public getCount() {
-    return this.count;
+    return ProductRepo.count;
   }
 }
 
-
-export { ProductRepo }
-
+export { ProductRepo };

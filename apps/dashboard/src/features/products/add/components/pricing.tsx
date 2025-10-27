@@ -27,6 +27,7 @@ function AddProductPricing() {
         <FormInput
           label='Discount Percent'
           min={0}
+          defaultValue='0'
           placeholder='Enter Product Discount'
           name='discount_percentage'
           type='number'

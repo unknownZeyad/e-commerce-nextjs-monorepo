@@ -11,15 +11,38 @@ import { ChevronRightIcon } from 'lucide-react'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@packages/client/src/components/ui/carousel'
 import { RiArrowRightWideLine, RiArrowLeftWideLine } from "react-icons/ri";
 import { cn } from '@packages/client/src/lib/utils'
+import { FaImage } from 'react-icons/fa6'
 
 
 function ProductDetails() {
   const { data, isLoading } = useGetProduct()
 
   if (isLoading) return (
-    <div>
-      
-    </div>
+    <Card>
+      <CardContent className='pt-6'>
+        <div className='flex gap-7'>
+          <div className="skeleton h-auto w-1/3 aspect-square"/>
+          <div className='w-2/3'>
+            <div className='h-[40px] mb-3 skeleton'/>
+            <div className='h-[30px] mb-12 rounded-full skeleton'/>
+            <div className='space-y-3'>
+              <div className='h-[30px] skeleton'/>
+              <div className='h-[20px] skeleton'/>
+              <div className='h-[20px] skeleton'/>
+              <div className='h-[20px] skeleton'/>
+              <div className='h-[20px] skeleton'/>
+              <div className='space-y-1 mt-6'>
+                <div className='h-[15px] skeleton'/>
+                <div className='h-[15px] skeleton'/>
+                <div className='h-[15px] skeleton'/>
+                <div className='h-[15px] skeleton'/>
+                <div className='h-[15px] skeleton'/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 
   if (!data) return <div>No Data To Show</div>
@@ -118,7 +141,7 @@ function Variants () {
               key={idx}
             >
               <p className='text-lg mb-2 font-medium'>{name}</p>
-              <div className='flex gap-3'>
+              <div className='flex gap-3 flex-wrap w-fit'>
                 {linked_products.map((prod,idx) => (
                   <Button key={idx} asChild variant='primary'>
                     <Link href={prod.id.toString()}>  
@@ -167,7 +190,11 @@ export function ProductImageViewer () {
             </CarouselPrevious>
 
           </Carousel>
-        ) : ''
+        ) : (
+          <div className="w-full border border-white/15 aspect-square bg-black flex items-center justify-center rounded-2xl">
+            <FaImage className='text-8xl text-white/20'/>
+          </div>
+        )
       }
     </div>
   )

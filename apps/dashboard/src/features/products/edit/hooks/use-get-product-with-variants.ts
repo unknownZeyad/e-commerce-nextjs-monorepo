@@ -7,9 +7,9 @@ export function useGetProductWithVariants () {
 
   const { data, isLoading, error } = useQuery({
     queryFn: () => getProductWithVariantsAction(+productId),
-    queryKey: ['product', productId],
+    queryKey: ['product_with_variants', productId],
     staleTime: Infinity,
-    gcTime: 0
+    gcTime: 0,
   })
 
   return { data, isLoading, error }

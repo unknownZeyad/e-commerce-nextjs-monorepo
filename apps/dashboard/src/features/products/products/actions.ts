@@ -9,5 +9,7 @@ export async function getProductsAction({ limit, page, columns, filters }: {
   columns: (keyof Product)[]
   filters?: Partial<Product>
 }) {
+    console.log('the get all api is hitted')
+
   return await productService.getAll(page, limit, columns, filters)
 }

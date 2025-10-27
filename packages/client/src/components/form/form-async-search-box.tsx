@@ -27,7 +27,7 @@ function FormAsyncSearchBox({
   const selectId = useId()
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full overflow-hidden">
       {label && (
         <label
           className={`mb-[0.8rem] ${error ? 'error' : ''}`}

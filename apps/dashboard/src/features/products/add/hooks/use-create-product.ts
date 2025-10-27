@@ -10,8 +10,8 @@ export function useCreateProduct() {
     onSuccess(data) {
       queryClient.invalidateQueries({ queryKey: ['products'] })
       queryClient.invalidateQueries({ queryKey: ['search_products'] })
-      localStorage.setItem('uploading-images', JSON.stringify([]))
-      push('/dashboard/products')
+      localStorage.setItem('uploading-images', JSON.stringify({}))
+      // push('/dashboard/products')
     },
   })
 

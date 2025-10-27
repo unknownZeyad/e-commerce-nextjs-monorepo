@@ -1,7 +1,7 @@
-import { db } from "../../core/lib/db";
 import { InsertCategory } from "./model";
 import { CategoryLocalRepo } from "./repos/local";
 import { CategoryRemoteRepo } from "./repos/remote";
+import { db } from '../../core/infrastructure'
 
 class CategoryService {
   private localRepo: CategoryLocalRepo 

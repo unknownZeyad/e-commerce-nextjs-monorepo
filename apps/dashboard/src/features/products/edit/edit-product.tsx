@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { AddProductFormFields, addProductFormSchema } from '../add/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Form from '@packages/client/src/components/form/form'
+import { useIsMounted } from '@packages/client/src/hooks/use-is-mounted'
 import AddProductGeneralInfos from '../add/components/general-infos'
 import AddProductPricing from '../add/components/pricing'
 import AddProductVariants, { ProductSearchBoxOption } from '../add/components/variants'
@@ -56,6 +57,8 @@ function ProductForm () {
       variants: variants
     }
   })
+
+  if (isLoading) return <div>Loading Mother Fucker</div>
 
   function handleSubmit (data: AddProductFormFields) {
     
