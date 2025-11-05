@@ -1,6 +1,6 @@
-import { db, DrizzleClient } from "../../core/lib/db";
 import { eq, ilike, or, count, SQL, and, inArray } from "drizzle-orm";
 import { Admin, adminsTable, InsertAdmin } from "./model";
+import { db, DrizzleClient } from "../../core/infrastructure";
 
 class AdminRepo {
   private db: DrizzleClient;

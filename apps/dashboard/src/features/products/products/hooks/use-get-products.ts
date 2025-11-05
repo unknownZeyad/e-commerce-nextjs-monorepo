@@ -21,7 +21,7 @@ export function useGetProducts () {
     queryFn: () => getProductsAction({ 
       page, 
       limit,
-      columns: ['id', 'name', 'price', 'quantity', 'images', 'discountPercentage', 'createdDate'], 
+      columns: ['id', 'name', 'price', 'quantity', 'discountPercentage', 'createdDate'], 
       filters: {
         name: query,
         categoryFullPath

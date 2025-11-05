@@ -1,30 +1,35 @@
 import { IoMdAdd } from "react-icons/io";
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from '@packages/client/src/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@packages/client/src/components/ui/card'
 import { FaRegTrashAlt } from "react-icons/fa";
 import { AddProductFormFields } from "../schema";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Input } from "@packages/client/src/components/ui/input";
 import { BsTrashFill } from "react-icons/bs";
 
+
 export default function AddProductVariants () {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { control } = useFormContext<AddProductFormFields>()
+  const { control, getValues, setValue } = useFormContext<AddProductFormFields>()
   const { fields, append, remove } = useFieldArray<AddProductFormFields>({
     control,
-    name: 'variants'
+    name: 'variants.options'
   })
+
+  useEffect(() => {
+    setValue(
+      'variants.variants_hash', 
+      JSON.stringify(getValues('variants.options'))
+    )
+  },[fields])
 
   function addVariant () {
     const value = inputRef.current?.value
     if (value) {
       if (fields.find(curr => curr.name === value)) return
       if (inputRef.current) inputRef.current.value = ''
-      append({
-        name: value, 
-        values: []
-      })
+      append({ name: value, values: [] } as any)
     }
   }
 
@@ -67,33 +72,35 @@ const VariantField = function ({ removeVariant, index }: {
   index: number
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { control, setValue } = useFormContext<AddProductFormFields>()
-  const { name, values } = useWatch({
+  const { control, setValue, getValues } = useFormContext<AddProductFormFields>()
+
+  const { append, remove, fields } = useFieldArray<AddProductFormFields>({
     control,
-    name: `variants.${index}`
+    name: `variants.options.${index}.values`
   })
 
-  function append () {
+  const addValue = () => {
     const value = inputRef.current?.value
     if (value) {
-      if (values.includes(value)) return
+      if (fields.find(curr => curr.name === value)) return
       if (inputRef.current) inputRef.current.value = ''
-      setValue(
-        `variants.${index}.values`, 
-        [...values, value]
-      )
+      append({ name: value })
     }
   }
 
-  function remove (vIndex: number) {
-    const filtered = values.filter((_,idx)=> idx !== vIndex)
-    setValue(`variants.${index}.values`, filtered)
-  }
+  useEffect(() => {
+    setValue(
+      'variants.variants_hash', 
+      JSON.stringify(getValues('variants.options'))
+    )
+  },[fields])
 
   return (
     <div className='bg-background border space-y-4 border-white/10 rounded-xl p-5'>
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xl font-semibold break-all w-1/3">{name}</p>
+        <p className="text-xl font-semibold break-all w-1/3">
+          {getValues(`variants.options.${index}.name`)}
+        </p>
         <div className="flex gap-2 w-2/3">
           <Input
             ref={inputRef}
@@ -101,7 +108,7 @@ const VariantField = function ({ removeVariant, index }: {
           />
           <Button 
             type="button"
-            onClick={append}
+            onClick={addValue}
           >
             <IoMdAdd/>
             Add Value 
@@ -115,14 +122,14 @@ const VariantField = function ({ removeVariant, index }: {
           </Button>
         </div>
       </div>
-      {values.length ? (
+      {fields.length ? (
         <div className="flex gap-2 flex-wrap">
-          {values.map((curr, idx) => (
+          {fields.map(({ name, id }, idx) => (
             <div 
-              key={idx} 
+              key={id} 
               className="gap-2 flex items-center p-2 pl-4 bg-light-black border border-white/10 rounded-lg text-black"
             >
-              <p className="text-white">{curr}</p>
+              <p className="text-white">{name}</p>
               <BsTrashFill 
                 onClick={() => remove(idx)} 
                 className="text-red-500 text-2xl rounded p-1 cursor-pointer hover:bg-red-500/20"

@@ -3,24 +3,6 @@ import { InsertProduct, Product } from './model';
 import { ProductRepo } from './repo'
 import { InsertVariant, VariantRepo } from './variants/repo';
 
-export type ProductWithVariants = Omit<Product, 'variants'> & {
-  variants: {
-    name: string;
-    linked_products: {
-      value: string;
-      product: Omit<
-        Product,
-        | 'description'
-        | 'discountPercentage'
-        | 'categoryFullPath'
-        | 'createdDate'
-        | 'updatedDate'
-        | 'variants'
-      >;
-    }[];
-  }[];
-} | null
-
 class ProductService {
   private productRepo: ProductRepo = new ProductRepo(db);
 
@@ -28,7 +10,11 @@ class ProductService {
     return await this.productRepo.getById(productId)
   }
 
-  public async create (product: Omit<InsertProduct, 'mainVariantId'>, variants: Omit<InsertVariant, 'productId'|'name'>[], mainVariantIndex: number) {
+  public async create (
+    product: Omit<InsertProduct, 'mainVariantId'>, 
+    variants: Omit<InsertVariant, 'productId'|'name'>[], 
+    mainVariantIndex: number
+  ) {
     transaction(async (tx) => {
       const variantRepo = new VariantRepo(tx);
       const productRepo = new ProductRepo(tx);
@@ -39,7 +25,7 @@ class ProductService {
 
       const insertedVariants: InsertVariant[] = variants.map((variant) => ({
         ...variant,
-        name: product.name + variant.defaultSku.split('-').join(' - '),
+        name: product.name + " " + variant.defaultSku.split('-').join(' - '),
         productId: createdProduct.id,
         price: variant.price || product.price,
         defaultSku: createdProduct.id + '_' + variant.defaultSku 

@@ -4,7 +4,6 @@ import {
   serial,
   text,
   integer,
-  real,
   timestamp,
   jsonb,
 } from "drizzle-orm/pg-core";
@@ -14,9 +13,8 @@ export const productsTable = pgTable("products", {
   name: text("name").notNull(),
   brand: text('brand'),
   description: text("description").notNull(),
-  price: real("price").notNull(),
-  discountPercentage: real("discount_percentage").default(0).notNull(),
-  quantity: integer("quantity").notNull().default(0),
+  orderCount: integer('order_count').notNull().default(0),
+  images: text("images").array(),
   createdDate: timestamp("created_date", { mode: "string" })
     .defaultNow()
     .notNull(),

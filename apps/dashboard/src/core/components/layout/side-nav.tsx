@@ -3,6 +3,7 @@ import { cn } from '@packages/client/src/lib/utils';
 import { ChartNoAxesCombined, PackageSearch, ShoppingBasket, SlidersHorizontal, Store, UserRound } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { MdPermMedia } from "react-icons/md";
 
 const navSections = [
   {
@@ -32,6 +33,11 @@ const navSections = [
         label: 'Products',
         href: '/dashboard/products',
         icon: <Store className='w-[20px] aspect-square'/>
+      },
+      {
+        label: 'Media Management',
+        href: '/dashboard/media',
+        icon: <MdPermMedia className='w-[20px] aspect-square'/>
       },
     ]
   },

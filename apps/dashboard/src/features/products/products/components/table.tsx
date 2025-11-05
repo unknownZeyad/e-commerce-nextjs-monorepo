@@ -37,28 +37,18 @@ export default function ProductsTable () {
         />
       ) : (
         <>
-          <Table.Body
+          {/* <Table.Body
             data={(data!).products}
             render={({ 
               name, 
-              price, 
-              discountPercentage, 
-              quantity, 
+              images,
               createdDate, 
-              images, 
-              id 
+              id,
+              orderCount,
+              categoryFullPath
             }) => (
               <Link key={id} href={`/dashboard/products/${id}`}>
                 <Table.Row className='hover:bg-[#111]'>
-                  <Table.Cell>
-                    <div className="h-[40px] rounded-md w-[40px] overflow-hidden flex items-center justify-center bg-zinc-800 border border-white/10">
-                      {
-                        images?.[0] ? 
-                        <img className='h-full w-full object-cover' src={images[0]}/> : 
-                        <FaImage className="text-white/40 text-xl"/>
-                      }
-                    </div>
-                  </Table.Cell>
                   <Table.Cell>{name}</Table.Cell>
                   <Table.Cell>{price}</Table.Cell>
                   <Table.Cell>{discountPercentage}%</Table.Cell>
@@ -67,7 +57,7 @@ export default function ProductsTable () {
                 </Table.Row>
               </Link>
             )}
-          />
+          /> */}
           <Table.Footer className='flex items-center justify-between gap-5'>
             <p className='text-sm font-medium'>Showing {data?.products.length} Products Out Of {data?.productsCount} Products</p>
             <div className="w-fit">

@@ -15,7 +15,7 @@ const addProductSchema = addProductFormSchema.omit({
 export async function createProductAction(payload: z.infer<typeof addProductSchema>) {
   addProductSchema.parse(payload);
 
-  const variants = Object.values(payload.variant_combinations).map(({
+  const variants = Object.values(payload.variants.combinations).map(({
     price, quantity, enabled, defaultSku, customSku, discount_percentage, images
   }) => ({
     defaultSku, 
@@ -34,9 +34,12 @@ export async function createProductAction(payload: z.infer<typeof addProductSche
     price: +payload.price,
     quantity: +payload.quantity,
     discountPercentage: +payload.discount_percentage,
-    variants: payload.variants,
-    brand: payload.brand,
-  },variants, payload.primary_variant_index);
+    brand: payload.brand, 
+    variants: payload.variants.options.map((curr) => ({
+      name: curr.name,
+      values: curr.values.map(v => v.name)
+    })),
+  },variants, payload.variants.primary_variant_index);
 }
 
 

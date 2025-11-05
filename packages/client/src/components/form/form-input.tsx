@@ -1,5 +1,5 @@
 import { ComponentProps, ElementRef, forwardRef, memo, useId } from "react"
-import { useFormContext, useController } from "react-hook-form"
+import { useFormContext, useController, Controller } from "react-hook-form"
 import { Input } from "../ui/input";
 import { cn } from "../../lib/utils";
 
@@ -9,61 +9,59 @@ type TFormInputProps = {
   showValidationMessage?: boolean,
 } & ComponentProps<typeof Input>
 
-const FormInput = forwardRef<ElementRef<typeof Input>, TFormInputProps>(
-  function (
-    { 
-      name, 
-      showValidationMessage = true, 
-      label, 
-      defaultValue = "", 
-      className, 
-      ...props 
-    }, 
-    ref
-  ) {
-    if (!name) {
-      throw new Error("FormInput must be provided with a 'name' prop");
-    }
-
-    const { control } = useFormContext();
-    const { field, fieldState } = useController({
-      name,
-      control,
-      defaultValue
-    });
-
-    const error = fieldState.error;
-    const inputId = useId();
-
-    return (
-      <div className="w-full">
-        {label && (
-          <label
-            className={`text-sm ${error ? "text-red-500" : ""} mb-2`}
-            htmlFor={inputId}
-          >
-            {label} {error ? <span>*</span> : ""}
-          </label>
-        )}
-
-        <Input
-          {...field}
-          className={cn(className, error ? "border-red-500" : "")}
-          ref={ref}
-          id={inputId}
-          {...props}
-        />
-
-        {showValidationMessage && error && (
-          <p className="text-red-500 mt-2 capitalize text-[12px]">
-            {error.message}
-          </p>
-        )}
-      </div>
-    );
+const FormInput = function ({ 
+  name, 
+  showValidationMessage = true, 
+  label, 
+  defaultValue = "", 
+  className, 
+  ...props 
+}: TFormInputProps) {
+  if (!name) {
+    throw new Error("FormInput must be provided with a 'name' prop");
   }
-);
+
+  const { control } = useFormContext();
+  const inputId = useId();
+
+  return (
+    <div className="w-full">
+      <Controller
+        name={name}
+        defaultValue={defaultValue}
+        control={control}
+        render={({ field, fieldState }) => {
+          return (
+            <>
+              {label && (
+                <label
+                  className={`text-sm ${fieldState.error ? "text-red-500" : ""} mb-2`}
+                  htmlFor={inputId}
+                >
+                  {label} {fieldState.error ? <span>*</span> : ""}
+                </label>
+              )}
+              <Input
+                {...field}
+                className={cn(className, fieldState.error ? "border-red-500" : "")}
+                id={inputId}
+                {...props}
+              />
+              {showValidationMessage && fieldState.error && (
+                <p className="text-red-500 mt-2 capitalize text-[12px]">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </>
+          )
+        }}
+      />
+      
+    </div>
+  );
+}
+
 
 FormInput.displayName = "FormInput";
 
-export default memo(FormInput);
+export default (FormInput);

@@ -1,6 +1,6 @@
-import { db, DrizzleClient } from "../../../core/lib/db";
 import { eq } from "drizzle-orm";
 import { Category, InsertCategory, categoriesTable } from "../model";
+import { DrizzleClient } from "../../../core/infrastructure";
 
 export class CategoryRemoteRepo {
   private db: DrizzleClient;
