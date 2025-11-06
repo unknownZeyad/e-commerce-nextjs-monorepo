@@ -150,7 +150,7 @@ function Cell({ children, ...props }: ComponentProps<"div">) {
       className={cn(
         'table_cell', 
         props.className, 
-        horizontalAlignment === 'center' ? '!justify-center' : horizontalAlignment === 'right' ? '!justify-end' : '!justify-start'
+        horizontalAlignment === 'center' ? '!justify-center text-center' : horizontalAlignment === 'right' ? '!justify-end' : '!justify-start'
       )}
     >
       {children}

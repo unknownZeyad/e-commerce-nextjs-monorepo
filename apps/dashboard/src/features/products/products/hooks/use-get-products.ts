@@ -1,6 +1,5 @@
 import { getProductsAction } from "../actions"
 import { useURLParams } from "@packages/client/src/hooks/use-url-params"
-import { Product } from "@packages/server/features/products/model"
 import { useQuery } from "@tanstack/react-query"
 
 export function useGetProducts () {
@@ -11,17 +10,11 @@ export function useGetProducts () {
   const categoryFullPath = get('category-path') ?? undefined
   const query = get('search') || '' 
 
-  const { data, isLoading, error } = useQuery<{
-    totalPages: number,
-    currentPage: number,
-    products: Product[],
-    productsCount: number
-  }>({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['products', page, query, limit, categoryFullPath],
     queryFn: () => getProductsAction({ 
       page, 
       limit,
-      columns: ['id', 'name', 'price', 'quantity', 'discountPercentage', 'createdDate'], 
       filters: {
         name: query,
         categoryFullPath

@@ -4,13 +4,21 @@ import { productService } from "@packages/server/features/products/services";
 import { addProductFormSchema } from "./schema"
 import z from "zod"
 
+const baseVariantsSchema = addProductFormSchema.shape.variants;
+const modifiedVariantsSchema = baseVariantsSchema.omit({
+  generated_variants_hash: true,
+  variants_hash: true,
+});
 
 const addProductSchema = addProductFormSchema.omit({
   category: true,
+  price: true,
+  quantity: true,
+  discount_percentage: true
 }).extend({
-  category_full_path: z.string(),
-})
-
+  variants: modifiedVariantsSchema,
+  category_full_path: z.string()
+});
 
 export async function createProductAction(payload: z.infer<typeof addProductSchema>) {
   addProductSchema.parse(payload);
@@ -31,9 +39,6 @@ export async function createProductAction(payload: z.infer<typeof addProductSche
     categoryFullPath: payload.category_full_path,
     description: payload.description,
     name: payload.name,
-    price: +payload.price,
-    quantity: +payload.quantity,
-    discountPercentage: +payload.discount_percentage,
     brand: payload.brand, 
     variants: payload.variants.options.map((curr) => ({
       name: curr.name,

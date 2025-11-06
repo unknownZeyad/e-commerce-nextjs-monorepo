@@ -11,7 +11,6 @@ export const addProductFormSchema = z.object({
   price: numberValidation,
   discount_percentage: positiveNumberValidation,
   quantity: positiveNumberValidation,
-  // images: z.array(z.string()),
   category: z.object({
     name: z.string(),
     id: z.number(),
@@ -49,7 +48,13 @@ export const addProductFormSchema = z.object({
     )
   })
 }).superRefine((data, ctx) => {
-  const { generated_variants_hash, variants_hash, options } = data.variants
+  const { generated_variants_hash, variants_hash, options, combinations } = data.variants
+  if (!options.length || !Object.keys(combinations).length)
+    ctx.addIssue({
+      path: ['variants'],
+      message: "Must At Least Create One Variant",
+      code: ZodIssueCode.custom
+    })
   if (generated_variants_hash !== variants_hash)
     ctx.addIssue({
       path: ['variants'],

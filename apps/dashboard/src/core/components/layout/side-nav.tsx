@@ -25,11 +25,6 @@ const navSections = [
         icon: <ShoppingBasket className='w-[20px] aspect-square'/>
       },
       {
-        label: 'Inventories',
-        href: '/dashboard/inventories',
-        icon: <PackageSearch className='w-[20px] aspect-square'/>
-      },
-      {
         label: 'Products',
         href: '/dashboard/products',
         icon: <Store className='w-[20px] aspect-square'/>

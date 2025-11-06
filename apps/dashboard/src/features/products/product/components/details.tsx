@@ -54,40 +54,7 @@ function ProductDetails() {
           <ProductImageViewer/>
           <div className='w-2/3 space-y-6'>
             <BaseDetails/>
-            <div className='font-medium text-zinc-300'>
-              <p className='mb-2 text-lg font-semibold'>General Information</p>
-              <p>
-                <span>Price: </span>
-                <span className='text-white'>
-                  {data.price}
-                </span>
-              </p>
-              {data.discountPercentage ? (
-                <p>
-                  <span>Discount Percentage: </span>
-                  <span className='text-white'>
-                    {data.discountPercentage}%
-                  </span>
-                </p>
-              ): ''}
-              <p>
-                <span>Quantity: </span>
-                <span className='text-white'>
-                  {data.quantity}
-                </span>
-              </p>
-              <p>
-                <span>Created At: </span>
-                <span className='text-white'>
-                  {formatDate(data.createdDate)}
-                </span>
-              </p>
-            </div>
-
-            <div>
-              <p className='mb-1 text-lg font-semibold text-zinc-300'>Description</p>
-              <p>{data.description}</p>
-            </div>
+           
             
             <Variants/>
             
@@ -104,10 +71,11 @@ export default ProductDetails
 function BaseDetails () {
   const { data, isLoading: isLoading1 } = useGetProduct()
   const { data: categoryPath, isLoading: isLoading2 } = useGetCategoryFullPath((data!).categoryFullPath, !isLoading1)
+  
 
   return (
     <div>
-      <h3 className='text-3xl font-semibold ml-1'>{data!.name}</h3>
+      <h3 className='text-3xl font-semibold ml-1'>{data!.currentVariant.name}</h3>
       <div className={cn(
         "flex-wrap flex gap-2 mt-2 bg-black !rounded-full px-4 py-0.5 border border-white/15 w-fit",
         isLoading2 && 'skeleton h-[30px] w-[300px]'
@@ -129,32 +97,38 @@ function BaseDetails () {
 
 function Variants () {
   const { data } = useGetProduct()
+  const sku = data!.currentVariant.defaultSku
+
+  const getVariantSku = (value: string, index: number) => {
+    const id = sku.split('_')[0]
+    const realSku = sku.split('_')[1]
+
+    const toSku = realSku.split('-')
+    toSku[index] = value
+    return `${id}_${toSku.join('-')}`
+  }
 
   return (
-    (data!).variants.length ? (
-      <div>               
-        <p className='mb-2 text-xl font-semibold text-zinc-300'>Variants</p>
-        <div className='w-full gap-3 flex flex-wrap'>
-          {(data!).variants.map(({ name, linked_products }, idx) => (
-            <div 
-              className='bg-black/20 w-fit rounded-lg p-3 border border-white/10'
-              key={idx}
-            >
-              <p className='text-lg mb-2 font-medium'>{name}</p>
-              <div className='flex gap-3 flex-wrap w-fit'>
-                {linked_products.map((prod,idx) => (
-                  <Button key={idx} asChild variant='primary'>
-                    <Link href={prod.id.toString()}>  
-                      {prod.value}
-                    </Link>
-                  </Button>
-                ))}
-              </div>
-            </div>
-          ))}
+    <div className='w-full gap-3 flex flex-col'>
+      {(data!).variants.map(({ name, values }, index) => (
+        <div key={index}>
+          <p className='text-lg mb-2 font-medium capitalize'>{name}</p>
+          <div className='flex gap-2 w-fit'>
+            {values.map((value,idx) => (
+              <Button 
+                key={idx} 
+                variant={sku.includes(value) ? 'primary' : 'secondary'}
+                className='capitalize'
+              >
+                <Link href={`?sku=${getVariantSku(value, index)}`}>
+                  {value}
+                </Link>
+              </Button>
+            ))}
+          </div>
         </div>
-      </div>
-    ) : ''
+      ))}
+    </div>
   )
 }
 
@@ -166,7 +140,7 @@ export function ProductImageViewer () {
   return (
     <div className='w-1/3 h-fit'>
       {
-        data?.images?.length ? (
+        data?.length ? (
           <Carousel className="w-full aspect-square">
             <CarouselContent className="flex">
               {data.images.map((curr) => (

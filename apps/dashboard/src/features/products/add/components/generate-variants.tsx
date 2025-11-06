@@ -19,9 +19,11 @@ import { IoMdCloudUpload } from 'react-icons/io'
 import { useDeleteMediaFile } from '@/features/media-manager/hooks/use-delete-media-file'
 
 function GenerateVariants() {
-  const [combinations, setCombinations] = useState<string[]>([])
-  const workerRef = useRef<Worker>(null)
   const { getValues, setValue, unregister, formState } = useFormContext<AddProductFormFields>()
+  const [combinations, setCombinations] = useState<string[]>(
+    Object.keys(getValues('variants.combinations') || {}) 
+  )
+  const workerRef = useRef<Worker>(null)
   const generatedHash = getValues('variants.generated_variants_hash')
 
   const generateVariants = (vOptions: AddProductFormFields['variants']['options']) => {
@@ -36,12 +38,13 @@ function GenerateVariants() {
   useEffect(() => {
     const worker = new Worker('/workers/variant-generator.js');
     workerRef.current = worker
-    workerRef.current.addEventListener("message", ({ data }) => setCombinations(data)) 
+    workerRef.current.addEventListener("message", 
+      ({ data }) => setCombinations(data)
+    ) 
 
-    generateVariants(getValues('variants').options)
     return () => worker.terminate()
   },[])
-
+  
   return (
     <>
       <Button 
@@ -111,7 +114,9 @@ const VariantRow = memo(function ({ sku, index }: {
   })
 
   useEffect(() => {
+    const defaultImgs = getValues(`variants.combinations.${sku}.images`) || []
     setValue(`variants.combinations.${sku}.defaultSku`, sku)
+    setValue(`variants.combinations.${sku}.images`, defaultImgs)
   },[])
 
   const isPrimary = primaryIdx === index
