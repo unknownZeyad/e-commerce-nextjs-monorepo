@@ -24,9 +24,7 @@ CREATE TABLE "products" (
 	"name" text NOT NULL,
 	"brand" text,
 	"description" text NOT NULL,
-	"price" real NOT NULL,
-	"discount_percentage" real DEFAULT 0 NOT NULL,
-	"quantity" integer DEFAULT 0 NOT NULL,
+	"order_count" integer DEFAULT 0 NOT NULL,
 	"created_date" timestamp DEFAULT now() NOT NULL,
 	"updated_date" timestamp DEFAULT now() NOT NULL,
 	"category_full_path" text NOT NULL,
@@ -40,10 +38,10 @@ CREATE TABLE "product_variants" (
 	"default_sku" text NOT NULL,
 	"productId" integer NOT NULL,
 	"name" text NOT NULL,
-	"price" real,
-	"discount_percentage" real DEFAULT 0,
+	"price" real NOT NULL,
+	"discount_percentage" real DEFAULT 0 NOT NULL,
 	"images" text[] DEFAULT '{}' NOT NULL,
-	"quantity" integer DEFAULT 0,
+	"quantity" integer DEFAULT 0 NOT NULL,
 	"disabled" boolean DEFAULT false NOT NULL
 );
 --> statement-breakpoint

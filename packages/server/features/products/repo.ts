@@ -1,6 +1,7 @@
 import { AnyClient } from "../../core/infrastructure";
 import { eq, ilike, count, SQL, and, inArray } from "drizzle-orm";
 import { InsertProduct, Product, productsTable } from "./model";
+import { variantsTable } from "./variants/model";
 
 class ProductRepo {
   private client: AnyClient;
@@ -31,11 +32,9 @@ class ProductRepo {
   public async getAll(
     page: number,
     limit: number,
-    columns: (keyof Product)[],
     filters?: Partial<Product>
   ) {
     let whereClause: SQL | undefined;
-    const selection = this.getSelectedCols(columns);
 
     if (filters && Object.keys(filters).length > 0) {
       const conditions: SQL[] = [];
@@ -51,18 +50,27 @@ class ProductRepo {
           conditions.push(eq(column, value));
         }
       }
-
-      if (conditions.length > 0) {
-        whereClause = and(...conditions);
-      }
+      if (conditions.length > 0) 
+      whereClause = and(...conditions);
     }
 
-    const products = (await this.client
-      .select(selection)
-      .from(productsTable)
-      .where(whereClause)
-      .limit(limit)
-      .offset((page - 1) * limit)) as Product[];
+    const products = await this.client
+    .select({
+      id: productsTable.id,
+      createdAt: productsTable.createdDate,
+      orderCount: productsTable.orderCount,
+      brand: productsTable.brand,
+      name: productsTable.name,
+      price: variantsTable.price,
+      quantity: variantsTable.quantity,
+      discountPercentage: variantsTable.discountPercentage,
+      images: variantsTable.images,
+    })
+    .from(productsTable)
+    .innerJoin(variantsTable, eq(productsTable.mainVariantId, variantsTable.id))
+    .where(whereClause)
+    .limit(limit)
+    .offset((page - 1) * limit)
 
     const totalPages = Math.ceil(ProductRepo.count / limit);
 
@@ -83,7 +91,7 @@ class ProductRepo {
     return product;
   }
 
-  public async deleteById(id: number) {
+  public async deleteById(id: number, sku?: string) {
     const [product] = await this.client
       .delete(productsTable)
       .where(eq(productsTable.id, id))
@@ -110,13 +118,41 @@ class ProductRepo {
       .where(inArray(productsTable.id, ids))) as Product[];
   }
 
-  public async getById(id: number) {
-    const [product] = await this.client
-      .select()
-      .from(productsTable)
-      .where(eq(productsTable.id, id));
-    return product ?? null;
-  }
+  public async getById(id: number, defaultSku?: string) {
+  const [product] = await this.client
+    .select({
+      id: productsTable.id,
+      description: productsTable.description,
+      categoryFullPath: productsTable.categoryFullPath,
+      variants: productsTable.variants,
+      brand: productsTable.brand,
+      orderCount: productsTable.orderCount,
+      currentVariant: {
+        id: variantsTable.id,
+        price: variantsTable.price,
+        images: variantsTable.images,
+        name: variantsTable.name,
+        discountPercentage: variantsTable.discountPercentage,
+        quantity: variantsTable.quantity,
+        orderCount: variantsTable.orderCount,
+        defaultSku: variantsTable.defaultSku,
+        disabled: variantsTable.disabled,
+      },
+    })
+    .from(productsTable)
+    .innerJoin(
+      variantsTable,
+      defaultSku
+        ? eq(variantsTable.defaultSku, defaultSku)
+        : eq(productsTable.mainVariantId, variantsTable.id)
+    )
+    .where(eq(productsTable.id, id))
+    .limit(1);
+
+  return product ?? null;
+}
+
+
 
   public getCount() {
     return ProductRepo.count;

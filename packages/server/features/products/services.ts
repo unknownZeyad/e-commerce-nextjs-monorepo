@@ -6,8 +6,8 @@ import { InsertVariant, VariantRepo } from './variants/repo';
 class ProductService {
   private productRepo: ProductRepo = new ProductRepo(db);
 
-  public async getById (productId: number) {
-    return await this.productRepo.getById(productId)
+  public async getById (productId: number, sku?: string) {
+    return await this.productRepo.getById(productId, sku)
   }
 
   public async create (
@@ -27,7 +27,7 @@ class ProductService {
         ...variant,
         name: product.name + " " + variant.defaultSku.split('-').join(' - '),
         productId: createdProduct.id,
-        price: variant.price || product.price,
+        price: variant.price,
         defaultSku: createdProduct.id + '_' + variant.defaultSku 
       }))
 
@@ -45,10 +45,9 @@ class ProductService {
   public async getAll (
     page: number,
     limit: number,
-    columns: (keyof Product)[],
     filters?: Partial<Product>,
   ) {
-    return await this.productRepo.getAll(page, limit, columns, filters)
+    return await this.productRepo.getAll(page, limit, filters)
   }
   
   public async updateById (id: number, payload: Partial<InsertProduct>) {

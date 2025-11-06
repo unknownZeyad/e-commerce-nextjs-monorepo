@@ -1,6 +1,6 @@
 {
-  "id": "16d60033-e5e3-4822-bea6-0cc8a43990d4",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "e6db0358-2a87-4115-b4e0-64d3e0b14c36",
+  "prevId": "16d60033-e5e3-4822-bea6-0cc8a43990d4",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -238,6 +238,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "order_count": {
+          "name": "order_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
         },
         "productId": {
           "name": "productId",

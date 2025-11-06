@@ -14,7 +14,6 @@ export const productsTable = pgTable("products", {
   brand: text('brand'),
   description: text("description").notNull(),
   orderCount: integer('order_count').notNull().default(0),
-  images: text("images").array(),
   createdDate: timestamp("created_date", { mode: "string" })
     .defaultNow()
     .notNull(),
