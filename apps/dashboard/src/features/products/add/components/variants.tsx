@@ -4,25 +4,18 @@ import { Button } from '@packages/client/src/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@packages/client/src/components/ui/card'
 import { FaRegTrashAlt } from "react-icons/fa";
 import { AddProductFormFields } from "../schema";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Input } from "@packages/client/src/components/ui/input";
 import { BsTrashFill } from "react-icons/bs";
 
 
 export default function AddProductVariants () {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { control, getValues, setValue } = useFormContext<AddProductFormFields>()
+  const { control } = useFormContext<AddProductFormFields>()
   const { fields, append, remove } = useFieldArray<AddProductFormFields>({
     control,
     name: 'variants.options'
   })
-
-  useEffect(() => {
-    setValue(
-      'variants.variants_hash', 
-      JSON.stringify(getValues('variants.options'))
-    )
-  },[fields])
 
   function addVariant () {
     const value = inputRef.current?.value
@@ -76,7 +69,7 @@ const VariantField = function ({ removeVariant, index }: {
 
   const { append, remove, fields } = useFieldArray<AddProductFormFields>({
     control,
-    name: `variants.options.${index}.values`
+    name: `variants.options.${index}.values`,
   })
 
   const addValue = () => {
@@ -85,15 +78,12 @@ const VariantField = function ({ removeVariant, index }: {
       if (fields.find(curr => curr.name === value)) return
       if (inputRef.current) inputRef.current.value = ''
       append({ name: value })
+      setValue(
+        'variants.variants_hash', 
+        JSON.stringify(getValues('variants.options')),
+      )
     }
   }
-
-  useEffect(() => {
-    setValue(
-      'variants.variants_hash', 
-      JSON.stringify(getValues('variants.options'))
-    )
-  },[fields])
 
   return (
     <div className='bg-background border space-y-4 border-white/10 rounded-xl p-5'>

@@ -17,14 +17,15 @@ import { useUploadMediaFiles } from '@/features/media-manager/hooks/use-upload-f
 import { PiSpinnerBold } from "react-icons/pi";
 import { IoMdCloudUpload } from 'react-icons/io'
 import { useDeleteMediaFile } from '@/features/media-manager/hooks/use-delete-media-file'
+import { IoCloseSharp } from "react-icons/io5";
+import { ImSpinner8 } from "react-icons/im";
 
 function GenerateVariants() {
   const { getValues, setValue, unregister, formState } = useFormContext<AddProductFormFields>()
+  const workerRef = useRef<Worker>(null)
   const [combinations, setCombinations] = useState<string[]>(
     Object.keys(getValues('variants.combinations') || {}) 
   )
-  const workerRef = useRef<Worker>(null)
-  const generatedHash = getValues('variants.generated_variants_hash')
 
   const generateVariants = (vOptions: AddProductFormFields['variants']['options']) => {
     setCombinations([])
@@ -41,7 +42,6 @@ function GenerateVariants() {
     workerRef.current.addEventListener("message", 
       ({ data }) => setCombinations(data)
     ) 
-
     return () => worker.terminate()
   },[])
   
@@ -62,7 +62,10 @@ function GenerateVariants() {
               <CardTitle>Generated Variants</CardTitle>
             </CardHeader>
             <CardContent>
-              <Table horizontalAlignment='center' columns='grid-cols-[60px_60px_1fr_0.9fr_0.65fr_0.65fr_0.65fr_60px]'>
+              <Table 
+                horizontalAlignment='center' 
+                columns='grid-cols-[60px_60px_1fr_0.9fr_0.65fr_0.65fr_0.65fr_60px]'
+              >
                 <Table.Header className='text-center !bg-black'>
                   <Table.Cell>Primary</Table.Cell>
                   <Table.Cell>Enabled</Table.Cell>
@@ -75,7 +78,6 @@ function GenerateVariants() {
                 </Table.Header>
                 <Table.VirtualizedBody
                   overscan={20}
-                  key={generatedHash}
                   data={combinations}
                   render={(sku, idx) => <VariantRow index={idx} sku={sku} key={sku}/>}
                 />
@@ -193,7 +195,11 @@ const VariantRow = memo(function ({ sku, index }: {
         <ImageUpload 
           sku={sku}
           trigger={(
-            <Button disabled={!enabled} variant='outline'>
+            <Button 
+              type='button' 
+              disabled={!enabled} 
+              variant='outline'
+            >
               <AiOutlineCloudUpload className='text-2xl'/>
             </Button>
           )}
@@ -244,7 +250,9 @@ function ImageUpload({ sku, trigger }: {
             isUploading && 'cursor-not-allowed opacity-70'
           )}
         >
-          {isUploading? <PiSpinnerBold className='text-4xl text-rose-700 animate-spin'/> : <IoMdCloudUpload className='text-6xl text-rose-700'/>}
+          {isUploading? 
+          <PiSpinnerBold className='text-4xl text-rose-700 animate-spin'/> : 
+          <IoMdCloudUpload className='text-6xl text-rose-700'/>}
           <p className="text-rose-700 text-xs font-medium text-center">Max Image Size Should be 1 MB</p>
         </label>
         <input
@@ -257,7 +265,7 @@ function ImageUpload({ sku, trigger }: {
           multiple
         />
         <div className='w-full grid grid-cols-4 mt-4 gap-2 max-h-[200px] overflow-auto pr-1'>
-          {images.map((curr) => <Image key={curr} url={curr}/>)}
+          {images.map((curr) => <Image sku={sku} key={curr} url={curr}/>)}
         </div>
       </PopoverContent>
     </Popover>
@@ -265,19 +273,45 @@ function ImageUpload({ sku, trigger }: {
 }
 
 
-function Image ({ url }: {
-  url: string
+function Image ({ url, sku }: {
+  url: string,
+  sku: string
 }) {
-  const { deleteFile } = useDeleteMediaFile()
+  const { setValue, getValues } = useFormContext<AddProductFormFields>()
+  const { deleteFile, isDeleting } = useDeleteMediaFile()
+
+  function deleteImage () {
+    const fileName = url.split('/').at(-1)!.split('.')[0]
+    deleteFile(fileName, {
+      onSuccess: () => {
+        const filteredImages = getValues(`variants.combinations.${sku}.images`)!
+        .filter((curr) => curr !== url)
+        setValue(`variants.combinations.${sku}.images`, filteredImages)
+      }
+    })
+  }
 
   return (
-    <div className='w-full relative'>
+    <div className={cn(
+      'w-full group after:bg-black/30 overflow-hidden after:opacity-0 after:absolute after:top-0 after:left-0 after:z-10 after:w-full after:h-full hover:after:opacity-100 after:duration-150 relative',
+      isDeleting && 'after:opacity-100 after:bg-red-900/20'
+    )}>
       <img 
         src={url} 
         alt="Uploaded Image"
         className='aspect-square w-full object-cover rounded-lg block' 
       />
-
+      {isDeleting ? (
+        <ImSpinner8
+          className='top-1/2 left-1/2 -translate-1/2 animate-spin absolute text-red-700 text-4xl'
+        />
+      ): (
+        <IoCloseSharp 
+          onClick={deleteImage}
+          className='top-2 right-2 opacity-0 group-hover:opacity-100 duration-150 rounded 
+          cursor-pointer hover:bg-red-700 p-1 text-xl bg-red-500 text-white absolute z-20'
+        />
+      )}
     </div>
   )
 }

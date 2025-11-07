@@ -62,7 +62,8 @@ function ProductForm () {
   const [step, setStep] = useState<number>(1)
   const { create, isPending } = useCreateProduct()
   const methods = useForm<AddProductFormFields>({
-    resolver: zodResolver(addProductFormSchema),
+    resolver: zodResolver(addProductFormSchema,{ },{}),
+    shouldFocusError: false,
     defaultValues: {
       variants: {
         primary_variant_index: 0,
@@ -74,19 +75,20 @@ function ProductForm () {
 
   function handleSubmit (data: AddProductFormFields) {
     if (!isPending) {
-      create({
-        brand: data.brand,
-        description: data.description,
-        name: data.name,
-        category_full_path: (data.category!).parentPath+(data.category!).id,
-        variants: {
-          combinations: data.variants.combinations,
-          options: data.variants.options,
-          primary_variant_index: data.variants.primary_variant_index
-        },
-      },{
-        onSuccess: () => router.push('/dashboard/products')
-      })
+      console.log(data)
+      // create({
+      //   brand: data.brand,
+      //   description: data.description,
+      //   name: data.name,
+      //   category_full_path: (data.category!).parentPath+(data.category!).id,
+      //   variants: {
+      //     combinations: data.variants.combinations,
+      //     options: data.variants.options,
+      //     primary_variant_index: data.variants.primary_variant_index
+      //   },
+      // },{
+      //   onSuccess: () => router.push('/dashboard/products')
+      // })
     }
   }
 

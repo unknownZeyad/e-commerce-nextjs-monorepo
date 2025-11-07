@@ -45,11 +45,13 @@ export const addProductFormSchema = z.object({
         enabled: z.boolean(),
         customSku: z.string().optional(),
       })
-    )
+    ).optional()
   })
-}).superRefine((data, ctx) => {
+})
+.superRefine((data, ctx) => {
   const { generated_variants_hash, variants_hash, options, combinations } = data.variants
-  if (!options.length || !Object.keys(combinations).length)
+
+  if (!options.length || !Object.keys(combinations||{}).length)
     ctx.addIssue({
       path: ['variants'],
       message: "Must At Least Create One Variant",

@@ -10,7 +10,7 @@ type FormProps<Fields extends FieldValues> = {
 export default function Form <T extends FieldValues>({ 
   form, 
   children, 
-  handleSubmit:onSubmit,
+  handleSubmit: onSubmit,
   ...props 
 }: FormProps<T>) {
   return (
