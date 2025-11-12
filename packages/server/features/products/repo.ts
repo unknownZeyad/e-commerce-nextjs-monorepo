@@ -91,13 +91,45 @@ class ProductRepo {
     return product;
   }
 
-  public async deleteById(id: number, sku?: string) {
+  public async deleteById(id: number) {
     const [product] = await this.client
       .delete(productsTable)
       .where(eq(productsTable.id, id))
       .returning();
     if (product) ProductRepo.count -= 1;
     return product ?? null;
+  }
+
+  public async getWithVariants (id: number) {
+    const [product] = await this.client
+      .select()
+      .from(productsTable)
+      .where(eq(productsTable.id, id))
+      .limit(1);
+
+    if (!product) return null;
+
+    const variantList = await this.client
+      .select({
+        customSku: variantsTable.customSku,
+        defaultSku: variantsTable.defaultSku,
+        discountPercentage: variantsTable.discountPercentage,
+        disabled: variantsTable.disabled,
+        images: variantsTable.images,
+        quantity: variantsTable.quantity,
+        price: variantsTable.price,
+        id: variantsTable.id
+      })
+      .from(variantsTable)
+      .where(eq(variantsTable.productId, id));
+
+    return {
+      ...product,
+      variants: {
+        options: product.variants,
+        combinations: variantList
+      }
+    };
   }
 
   public async updateById(id: number, payload: Partial<InsertProduct>) {
@@ -119,40 +151,39 @@ class ProductRepo {
   }
 
   public async getById(id: number, defaultSku?: string) {
-  const [product] = await this.client
-    .select({
-      id: productsTable.id,
-      description: productsTable.description,
-      categoryFullPath: productsTable.categoryFullPath,
-      variants: productsTable.variants,
-      brand: productsTable.brand,
-      orderCount: productsTable.orderCount,
-      currentVariant: {
-        id: variantsTable.id,
-        price: variantsTable.price,
-        images: variantsTable.images,
-        name: variantsTable.name,
-        discountPercentage: variantsTable.discountPercentage,
-        quantity: variantsTable.quantity,
-        orderCount: variantsTable.orderCount,
-        defaultSku: variantsTable.defaultSku,
-        disabled: variantsTable.disabled,
-      },
-    })
-    .from(productsTable)
-    .innerJoin(
-      variantsTable,
-      defaultSku
-        ? eq(variantsTable.defaultSku, defaultSku)
-        : eq(productsTable.mainVariantId, variantsTable.id)
-    )
-    .where(eq(productsTable.id, id))
-    .limit(1);
+    const [product] = await this.client
+      .select({
+        id: productsTable.id,
+        description: productsTable.description,
+        categoryFullPath: productsTable.categoryFullPath,
+        variants: productsTable.variants,
+        brand: productsTable.brand,
+        orderCount: productsTable.orderCount,
+        currentVariant: {
+          id: variantsTable.id,
+          price: variantsTable.price,
+          images: variantsTable.images,
+          name: variantsTable.name,
+          discountPercentage: variantsTable.discountPercentage,
+          quantity: variantsTable.quantity,
+          orderCount: variantsTable.orderCount,
+          defaultSku: variantsTable.defaultSku,
+          disabled: variantsTable.disabled,
+          customSKu: variantsTable.customSku
+        },
+      })
+      .from(productsTable)
+      .innerJoin(
+        variantsTable,
+        defaultSku
+          ? eq(variantsTable.defaultSku, defaultSku)
+          : eq(productsTable.mainVariantId, variantsTable.id)
+      )
+      .where(eq(productsTable.id, id))
+      .limit(1);
 
-  return product ?? null;
-}
-
-
+    return product ?? null;
+  }
 
   public getCount() {
     return ProductRepo.count;

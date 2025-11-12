@@ -4,11 +4,12 @@ import z from "zod";
 import { ZodIssueCode } from "zod/v3";
 
 
+
 export const addProductFormSchema = z.object({
   name: z.string().refine(v => v.length > 3, 'Product Name Must Be More than 3 Characters.'),
   brand: z.string().refine(v => v.length > 3, 'Brand Name Must Be More than 3 Characters.'),
   description: z.string().refine(v => v.length > 3, 'Product Description Must Be More than 3 Characters.'),
-  price: numberValidation,
+  price: positiveNumberValidation,
   discount_percentage: positiveNumberValidation,
   quantity: positiveNumberValidation,
   category: z.object({
@@ -37,7 +38,7 @@ export const addProductFormSchema = z.object({
     combinations: z.record(
       z.string(),
       z.object({
-        price: numberValidation,
+        price: positiveNumberValidation,
         discount_percentage: positiveNumberValidation,
         images: z.array(z.string()),
         quantity: positiveNumberValidation,
@@ -45,7 +46,7 @@ export const addProductFormSchema = z.object({
         enabled: z.boolean(),
         customSku: z.string().optional(),
       })
-    ).optional()
+    )
   })
 })
 .superRefine((data, ctx) => {
@@ -67,3 +68,23 @@ export const addProductFormSchema = z.object({
 
 
 export type AddProductFormFields = z.infer<typeof addProductFormSchema>
+
+
+const baseVariantsSchema = addProductFormSchema.shape.variants;
+const modifiedVariantsSchema = baseVariantsSchema.omit({
+  generated_variants_hash: true,
+  variants_hash: true,
+});
+
+export const addProductSchema = addProductFormSchema.omit({
+  category: true,
+  price: true,
+  quantity: true,
+  discount_percentage: true
+}).extend({
+  variants: modifiedVariantsSchema,
+  category_full_path: z.string()
+});
+
+
+export type AddProductPayload = z.infer<typeof addProductSchema>

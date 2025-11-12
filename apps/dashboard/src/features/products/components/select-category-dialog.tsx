@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, Dispatch, SetStateAction, useContext, useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTrigger, DialogTitle, DialogDescription } from '@packages/client/src/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@packages/client/src/components/ui/dialog'
 import { Checkbox } from '@packages/client/src/components/ui/checkbox'
 import { Category } from "@packages/server/features/categories/model"
 import { useGetCategories } from "@/features/categories/hooks/use-get-categories"

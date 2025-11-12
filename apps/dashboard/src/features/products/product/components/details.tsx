@@ -69,6 +69,9 @@ function ProductDetails() {
                 details.price}
               </div>
               <p>Quantity: {details.quantity}</p>
+              <p>Default SKu: {details.defaultSku}</p>
+              <p>Custom Sku: {details.customSKu || 'No Sku Provided'}</p>
+              <p>Orders: {details.orderCount}</p>
             </div>
             <p>{data.description}</p>
             <Variants/>

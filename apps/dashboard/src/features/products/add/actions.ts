@@ -1,33 +1,16 @@
 'use server'
 
 import { productService } from "@packages/server/features/products/services";
-import { addProductFormSchema } from "./schema"
-import z from "zod"
+import { addProductSchema, AddProductPayload } from "../schema";
 
-const baseVariantsSchema = addProductFormSchema.shape.variants;
-const modifiedVariantsSchema = baseVariantsSchema.omit({
-  generated_variants_hash: true,
-  variants_hash: true,
-});
-
-const addProductSchema = addProductFormSchema.omit({
-  category: true,
-  price: true,
-  quantity: true,
-  discount_percentage: true
-}).extend({
-  variants: modifiedVariantsSchema,
-  category_full_path: z.string()
-});
-
-export async function createProductAction(payload: z.infer<typeof addProductSchema>) {
+export async function createProductAction(payload: AddProductPayload) {
   addProductSchema.parse(payload);
 
   const variants = Object.values(payload.variants.combinations).map(({
     price, quantity, enabled, defaultSku, customSku, discount_percentage, images
   }) => ({
-    defaultSku, 
     price: +price,
+    defaultSku, 
     disabled: !enabled,
     quantity: +quantity,
     discountPercentage: +discount_percentage,

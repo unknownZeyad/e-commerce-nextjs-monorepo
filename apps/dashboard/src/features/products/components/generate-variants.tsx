@@ -3,7 +3,6 @@
 import { Button } from '@packages/client/src/components/ui/button'
 import React, { memo, ReactNode, useEffect, useId, useRef, useState } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
-import { AddProductFormFields } from '../schema'
 import Table from '@packages/client/src/components/ui/table'
 import { Checkbox } from '@packages/client/src/components/ui/checkbox'
 import { Card, CardContent, CardHeader, CardTitle } from '@packages/client/src/components/ui/card'
@@ -19,8 +18,11 @@ import { IoMdCloudUpload } from 'react-icons/io'
 import { useDeleteMediaFile } from '@/features/media-manager/hooks/use-delete-media-file'
 import { IoCloseSharp } from "react-icons/io5";
 import { ImSpinner8 } from "react-icons/im";
+import { AddProductFormFields } from '../schema'
 
-function GenerateVariants() {
+function GenerateVariants({ existingVariants }: {
+  existingVariants?: AddProductFormFields['variants']['combinations']
+}) {
   const { getValues, setValue, unregister, formState } = useFormContext<AddProductFormFields>()
   const workerRef = useRef<Worker>(null)
   const [combinations, setCombinations] = useState<string[]>(
@@ -66,7 +68,7 @@ function GenerateVariants() {
                 horizontalAlignment='center' 
                 columns='grid-cols-[60px_60px_1fr_0.9fr_0.65fr_0.65fr_0.65fr_60px]'
               >
-                <Table.Header className='text-center !bg-black'>
+                <Table.Header className='text-center bg-black!'>
                   <Table.Cell>Primary</Table.Cell>
                   <Table.Cell>Enabled</Table.Cell>
                   <Table.Cell>Variant</Table.Cell>
@@ -79,7 +81,14 @@ function GenerateVariants() {
                 <Table.VirtualizedBody
                   overscan={20}
                   data={combinations}
-                  render={(sku, idx) => <VariantRow index={idx} sku={sku} key={sku}/>}
+                  render={(sku, idx) => (
+                    <VariantRow 
+                      index={idx} 
+                      sku={sku} 
+                      existingVariant={existingVariants?.[sku]}
+                      key={sku}
+                    />
+                  )}
                 />
               </Table>
             </CardContent>
@@ -98,16 +107,17 @@ function GenerateVariants() {
 export default GenerateVariants
 
 
-const VariantRow = memo(function ({ sku, index }: { 
+const VariantRow = memo(function ({ sku, index, existingVariant }: { 
   sku: string,
-  index: number
+  index: number,
+  existingVariant?: AddProductFormFields['variants']['combinations'][string]
 }) {
   const { control, setValue, getValues } = useFormContext<AddProductFormFields>()
 
   const enabled = useWatch({
     control,
     name: `variants.combinations.${sku}.enabled`,
-    defaultValue: true
+    defaultValue: existingVariant?.enabled ?? true
   })
 
   const primaryIdx = useWatch({
@@ -116,7 +126,7 @@ const VariantRow = memo(function ({ sku, index }: {
   })
 
   useEffect(() => {
-    const defaultImgs = getValues(`variants.combinations.${sku}.images`) || []
+    const defaultImgs = getValues(`variants.combinations.${sku}.images`) || existingVariant?.images || []
     setValue(`variants.combinations.${sku}.defaultSku`, sku)
     setValue(`variants.combinations.${sku}.images`, defaultImgs)
   },[])
@@ -159,6 +169,7 @@ const VariantRow = memo(function ({ sku, index }: {
           type='text'
           disabled={!enabled}
           showValidationMessage={false}
+          defaultValue={existingVariant?.customSku}
         />
       </Table.Cell>
       <Table.Cell>
@@ -166,7 +177,7 @@ const VariantRow = memo(function ({ sku, index }: {
           name={`variants.combinations.${sku}.price`} 
           placeholder='Price' 
           type='number'
-          defaultValue={getValues('price')}
+          defaultValue={existingVariant?.price || getValues('price')}
           disabled={!enabled}
           showValidationMessage={false}
         />
@@ -177,7 +188,7 @@ const VariantRow = memo(function ({ sku, index }: {
           placeholder='Quantity' 
           type='number'
           disabled={!enabled}
-          defaultValue={getValues('quantity')}
+          defaultValue={existingVariant?.quantity || getValues('quantity')}
           showValidationMessage={false}
         />
       </Table.Cell>
@@ -187,7 +198,7 @@ const VariantRow = memo(function ({ sku, index }: {
           name={`variants.combinations.${sku}.discount_percentage`} 
           placeholder='Disount' 
           type='number'
-          defaultValue={getValues('discount_percentage')}
+          defaultValue={existingVariant?.discount_percentage || getValues('discount_percentage')}
           showValidationMessage={false}
         />
       </Table.Cell>
@@ -284,7 +295,7 @@ function Image ({ url, sku }: {
     const fileName = url.split('/').at(-1)!.split('.')[0]
     deleteFile(fileName, {
       onSuccess: () => {
-        const filteredImages = getValues(`variants.combinations.${sku}.images`)!
+        const filteredImages = getValues(`variants.combinations.${sku}.images`)
         .filter((curr) => curr !== url)
         setValue(`variants.combinations.${sku}.images`, filteredImages)
       }

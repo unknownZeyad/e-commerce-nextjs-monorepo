@@ -3,16 +3,16 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from '@packages/client/src/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@packages/client/src/components/ui/card'
 import { FaRegTrashAlt } from "react-icons/fa";
-import { AddProductFormFields } from "../schema";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Input } from "@packages/client/src/components/ui/input";
 import { BsTrashFill } from "react-icons/bs";
+import { AddProductFormFields } from "../schema";
 
 
 export default function AddProductVariants () {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { control } = useFormContext<AddProductFormFields>()
-  const { fields, append, remove } = useFieldArray<AddProductFormFields>({
+  const { control, setValue, getValues } = useFormContext<AddProductFormFields>()
+  const { fields, append, remove, } = useFieldArray<AddProductFormFields>({
     control,
     name: 'variants.options'
   })
@@ -49,9 +49,15 @@ export default function AddProductVariants () {
         <CardContent className='space-y-4'>
           {fields.map((curr, index) => (
             <VariantField 
-              key={curr.id}
-              removeVariant={() => remove(index)}
               index={index}
+              key={curr.id}
+              removeVariant={() => {
+                remove(index)
+                setValue(
+                  'variants.variants_hash', 
+                  JSON.stringify(getValues('variants.options')),
+                )
+              }}
             />
           ))}
         </CardContent>
@@ -121,8 +127,14 @@ const VariantField = function ({ removeVariant, index }: {
             >
               <p className="text-white">{name}</p>
               <BsTrashFill 
-                onClick={() => remove(idx)} 
                 className="text-red-500 text-2xl rounded p-1 cursor-pointer hover:bg-red-500/20"
+                onClick={() => {
+                  remove(idx)
+                  setValue(
+                    'variants.variants_hash', 
+                    JSON.stringify(getValues('variants.options')),
+                  )
+                }} 
               />
             </div>
           ))}

@@ -20,8 +20,8 @@ export function useGetProducts () {
         categoryFullPath
       },
     }),
-    // staleTime: 60 * 5 * 1000,
-    // gcTime: 60 * 5 * 1000,
+    staleTime: 60 * 5 * 1000,
+    gcTime: 60 * 5 * 1000,
   })
 
 

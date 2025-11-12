@@ -8,7 +8,7 @@ export class CategoryLocalRepo {
     return cat.parentPath + cat.id + '/';
   }
 
-  public async reload (categories: Category[]) {
+  public reload (categories: Category[]) {
     const newFullMap = new Map<string, Category>();
     const newParentMap = new Map<string, Category[]>();
 
@@ -25,11 +25,11 @@ export class CategoryLocalRepo {
     this.parentPathCachedMap = newParentMap;
   }
 
-  public async getSubCategories(parentPath?: string): Promise<Category[]> {
+  public getSubCategories(parentPath?: string): Category[] {
     return this.parentPathCachedMap.get(parentPath || "") || [];
   }
 
-  public async getCategoriesFullPath(fullPath: string): Promise<Category[]> {
+  public getCategoriesFullPath(fullPath: string): Category[] {
     const sequence: Category[] = [];
     let parentPath = ''
     fullPath.split("/").forEach((id) => {
@@ -40,7 +40,7 @@ export class CategoryLocalRepo {
     return sequence;
   }
 
-  public async create(category: Category) {
+  public create(category: Category) {
     const fullPath = this.getFullPath(category);
 
     this.fullPathCachedMap.set(fullPath, category);
@@ -50,7 +50,7 @@ export class CategoryLocalRepo {
     ); 
   }
 
-  public async update(category: Category) {
+  public update(category: Category) {
     const fullPath = this.getFullPath(category);
 
     this.fullPathCachedMap.set(fullPath, category);
@@ -65,7 +65,11 @@ export class CategoryLocalRepo {
     }
   }
 
-  public async delete(category: Category) {
+  public getCategoryByFullPath (fullPath: string) {
+    return this.fullPathCachedMap.get(fullPath)
+  }
+
+  public delete(category: Category) {
     const fullPath = this.getFullPath(category);
     const oldParentCache = this.parentPathCachedMap.get(category.parentPath) || []
 

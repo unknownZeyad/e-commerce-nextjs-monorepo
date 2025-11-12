@@ -26,17 +26,21 @@ class CategoryService {
 
   public async create(payload: InsertCategory) {
     const category = await this.remoteRepo.create(payload)
-    await this.localRepo.create(category)
+    this.localRepo.create(category)
   }
 
   public async updateById(id: number, payload: Partial<InsertCategory>) {
     const category = await this.remoteRepo.updateById(id, payload)
-    await this.localRepo.update(category!)
+    this.localRepo.update(category!)
   }
 
   public async deleteById(id: number) {
     const deleted = await this.remoteRepo.deleteById(id)
-    await this.localRepo.delete(deleted)
+    this.localRepo.delete(deleted)
+  }
+
+  public getCategoryByFullPath (fullPath: string) {
+    return this.localRepo.getCategoryByFullPath(fullPath)
   }
 }
 
