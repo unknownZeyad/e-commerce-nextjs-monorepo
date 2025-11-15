@@ -1,5 +1,5 @@
 {
-  "id": "16d60033-e5e3-4822-bea6-0cc8a43990d4",
+  "id": "fb566bf8-e3f6-4beb-a7b1-3fd0e767f467",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -238,6 +238,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "order_count": {
+          "name": "order_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
         },
         "productId": {
           "name": "productId",

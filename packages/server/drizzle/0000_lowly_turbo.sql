@@ -36,6 +36,7 @@ CREATE TABLE "product_variants" (
 	"id" bigserial PRIMARY KEY NOT NULL,
 	"custom_sku" text,
 	"default_sku" text NOT NULL,
+	"order_count" integer DEFAULT 0 NOT NULL,
 	"productId" integer NOT NULL,
 	"name" text NOT NULL,
 	"price" real NOT NULL,

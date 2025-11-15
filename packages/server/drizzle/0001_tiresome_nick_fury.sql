@@ -1,1 +1,0 @@
-ALTER TABLE "product_variants" ADD COLUMN "order_count" integer DEFAULT 0 NOT NULL;
